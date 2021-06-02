@@ -1,6 +1,6 @@
 <?php
 /**
- * NOTICE OF LICENSE
+ * NOTICE OF LICENSE.
  *
  * Digiteal for PrestaShop is subject to the Academic Free License (AFL 3.0)
  * that is bundled with this package in the file LICENSE.txt.
@@ -10,11 +10,10 @@
  * @author    SARL KIXELL (https://kixell.fr)
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
- * @package   digiteal
+ *
  * @version   1.0.0
  */
-
-if (! defined('_PS_VERSION_')) {
+if (!defined('_PS_VERSION_')) {
     exit();
 }
 
@@ -25,29 +24,32 @@ if (!class_exists('DigitealTools', false)) {
          * @param $key
          * @param $array
          * @param null $default
+         *
          * @return int|mixed|null
          */
         public static function findInArray($key, $array, $default = null)
         {
             if (is_array($array) && key_exists($key, $array)) {
                 if (is_bool($array[$key])) {
-                    return ($array[$key] ? 1 : 0);
+                    return $array[$key] ? 1 : 0;
                 } else {
                     return $array[$key];
                 }
             }
+
             return $default;
         }
 
         /**
          * @param $data
+         *
          * @return bool
          */
         public static function checkWebhookPaymentInitiated($data)
         {
             $error = false;
-            $keys = array('paymentRequestInformation', 'paymentStatus', 'paymentMethod', 'bankTransactionID');
-            $priKeys = array('paymentID', 'remittanceInfo', 'currency');
+            $keys = ['paymentRequestInformation', 'paymentStatus', 'paymentMethod', 'bankTransactionID'];
+            $priKeys = ['paymentID', 'remittanceInfo', 'currency'];
             if (!is_array($data)) {
                 $error = true;
             } else {
@@ -76,18 +78,20 @@ if (!class_exists('DigitealTools', false)) {
                     }
                 }
             }
+
             return !$error;
         }
 
         /**
          * @param $data
+         *
          * @return bool
          */
         public static function checkWebhookPaymentInitiationError($data)
         {
             $error = false;
-            $keys = array('paymentRequestInformation', 'paymentStatus', 'paymentMethod', 'bankTransactionID', 'errorMessage');
-            $priKeys = array('paymentID', 'remittanceInfo', 'currency');
+            $keys = ['paymentRequestInformation', 'paymentStatus', 'paymentMethod', 'bankTransactionID', 'errorMessage'];
+            $priKeys = ['paymentID', 'remittanceInfo', 'currency'];
             if (!is_array($data)) {
                 $error = true;
             } else {
@@ -115,12 +119,15 @@ if (!class_exists('DigitealTools', false)) {
                     }
                 }
             }
+
             return !$error;
         }
 
         /**
-         * Due to problems in some version of Prestashop, let's try to rebuild the context depending on the cart object
+         * Due to problems in some version of Prestashop, let's try to rebuild the context depending on the cart object.
+         *
          * @param CartCore $cart
+         *
          * @throws PrestaShopDatabaseException
          * @throws PrestaShopException
          */
@@ -145,16 +152,17 @@ if (!class_exists('DigitealTools', false)) {
 
         /**
          * @param $cart
+         *
          * @return string
          */
         public static function getOrderPageFromCart($cart)
         {
             $order_page = Configuration::get('PS_ORDER_PROCESS_TYPE') ? 'order-opc' : 'order';
-            $order_query = array();
+            $order_query = [];
             if (!Validate::isLoadedObject($cart) || $cart->nbProducts() <= 0) {
                 $order_page = self::digitealPageLink($order_page);
-            } elseif (! $cart->id_customer || ! $cart->id_address_delivery || ! $cart->id_address_invoice) {
-                if (version_compare(_PS_VERSION_, '1.7', '<') && ! Configuration::get('PS_ORDER_PROCESS_TYPE')) {
+            } elseif (!$cart->id_customer || !$cart->id_address_delivery || !$cart->id_address_invoice) {
+                if (version_compare(_PS_VERSION_, '1.7', '<') && !Configuration::get('PS_ORDER_PROCESS_TYPE')) {
                     $order_query['step'] = 3;
                     if (version_compare(_PS_VERSION_, '1.5.1', '<')) {
                         $order_query['cgv'] = 1;
@@ -163,20 +171,23 @@ if (!class_exists('DigitealTools', false)) {
                     $order_page = self::digitealPageLink($order_page, $order_query);
                 }
             }
+
             return self::digitealPageLink($order_page);
         }
 
         /**
          * @param $controller
          * @param array $query
+         *
          * @return string
          */
-        public static function digitealPageLink($controller, $query = array())
+        public static function digitealPageLink($controller, $query = [])
         {
             $url = Context::getContext()->link->getPageLink($controller, true);
             if (count($query) > 0) {
-                $url .= '?' . http_build_query($query);
+                $url .= '?'.http_build_query($query);
             }
+
             return $url;
         }
 
@@ -207,13 +218,13 @@ if (!class_exists('DigitealTools', false)) {
                     $use_ssl = !empty($url);
                     $url = $link->getPageLink($explode[0], $use_ssl);
                     if (isset($explode[1])) {
-                        $url .= '?' . $explode[1];
+                        $url .= '?'.$explode[1];
                     }
                 }
 
                 ob_end_clean();
                 header('Content-Type: application/json');
-                die(json_encode([
+                exit(json_encode([
                     'redirect' => $url,
                 ]));
             } else {

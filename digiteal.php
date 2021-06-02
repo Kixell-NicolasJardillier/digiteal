@@ -1,6 +1,6 @@
 <?php
 /**
- * NOTICE OF LICENSE
+ * NOTICE OF LICENSE.
  *
  * Digiteal for PrestaShop is subject to the Academic Free License (AFL 3.0)
  * that is bundled with this package in the file LICENSE.txt.
@@ -10,10 +10,9 @@
  * @author    SARL KIXELL (https://kixell.fr)
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
- * @package   digiteal
+ *
  * @version   1.0.0
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -21,7 +20,7 @@ if (!defined('_PS_VERSION_')) {
 require_once _PS_MODULE_DIR_.'/digiteal/src/includeClasses.php';
 
 /**
- * Class Digiteal
+ * Class Digiteal.
  */
 class Digiteal extends PaymentModule
 {
@@ -53,12 +52,12 @@ class Digiteal extends PaymentModule
         $this->version = '1.0.0';
         $this->tab = 'payments_gateways';
         $this->author = 'Kixell';
-        $this->controllers = array('redirect', 'confirmation', 'error');
+        $this->controllers = ['redirect', 'confirmation', 'error'];
         $this->is_eu_compatible = 1;
         $this->bootstrap = true;
         $this->need_instance = true;
         //$this->module_key = '';
-        $this->ps_versions_compliancy = array('min' => self::MODULE_MIN_VERSION, 'max' => self::MODULE_MAX_VERSION);
+        $this->ps_versions_compliancy = ['min' => self::MODULE_MIN_VERSION, 'max' => self::MODULE_MAX_VERSION];
         $this->currencies = true;
         if (is_callable('curl_init') === false) {
             $this->_errors[] = $this->l('To be able to use this module, please activate cURL (PHP extension).');
@@ -72,6 +71,7 @@ class Digiteal extends PaymentModule
 
     /**
      * Install the module.
+     *
      * @return bool
      */
     public function install()
@@ -103,7 +103,7 @@ class Digiteal extends PaymentModule
                     $installed = false;
                 }
             } else {
-                if (! $this->registerHook('paymentOptions')) {
+                if (!$this->registerHook('paymentOptions')) {
                     DigitealLogger::logError('Hook paymentOptions could not be saved.');
                     $this->_errors[] = $this->l('One or more hooks required for the module could not be saved.');
                     $installed = false;
@@ -113,15 +113,18 @@ class Digiteal extends PaymentModule
 
         if (false === $installed) {
             $this->uninstall();
+
             return false;
         }
 
         error_log('4');
-        return (bool)$installed;
+
+        return (bool) $installed;
     }
 
     /**
      * Uninstall the module.
+     *
      * @return bool
      */
     public function uninstall()
@@ -137,25 +140,26 @@ class Digiteal extends PaymentModule
                 Configuration::deleteByName('KD_ENABLE_ROADMAP') &&
                 Configuration::deleteByName('KD_KPIID');
             $uninstalled &= Db::getInstance()->execute(
-                'DELETE FROM `' . _DB_PREFIX_ . "configuration` WHERE `name` LIKE 'KD_%'"
+                'DELETE FROM `'._DB_PREFIX_."configuration` WHERE `name` LIKE 'KD_%'"
             );
         }
 
-        return (bool)$uninstalled;
+        return (bool) $uninstalled;
     }
 
     /**
      * To enable module admin controller.
+     *
      * @var array[]
      */
-    public $tabs = array(
-        array(
-            'name' => 'Digiteal Roadmap',
-            'class_name' => 'AdminDigitealRoadmap',
-            'visible' => false,
+    public $tabs = [
+        [
+            'name'              => 'Digiteal Roadmap',
+            'class_name'        => 'AdminDigitealRoadmap',
+            'visible'           => false,
             'parent_class_name' => 'AdminParentPayment',
-        ),
-    );
+        ],
+    ];
 
     /**
      * @param array $params
@@ -168,13 +172,15 @@ class Digiteal extends PaymentModule
             // If there is errors during payment and the customer is redirected to the checkout,
             // then keep the cart and display the message to the customer.
             if (isset($this->context->cookie->digitealErrors)) {
-                $controller->errors = array_merge($controller->errors,
-                    explode("\n", $this->context->cookie->digitealErrors));
+                $controller->errors = array_merge(
+                    $controller->errors,
+                    explode("\n", $this->context->cookie->digitealErrors)
+                );
                 unset($this->context->cookie->digitealErrors);
             }
         }
         //TODO optimize
-        $this->context->controller->addJS($this->_path . 'views/js/front.js');
+        $this->context->controller->addJS($this->_path.'views/js/front.js');
     }
 
     /**
@@ -186,8 +192,8 @@ class Digiteal extends PaymentModule
         $moduleName = (false === $moduleName ? Tools::getValue('configure') : $moduleName);
 
         if ($moduleName === $this->name) {
-            $this->context->controller->addJS($this->_path . 'views/js/back.js');
-            $this->context->controller->addCSS($this->_path . 'views/css/back.css');
+            $this->context->controller->addJS($this->_path.'views/js/back.js');
+            $this->context->controller->addCSS($this->_path.'views/css/back.css');
         }
     }
 
@@ -211,12 +217,13 @@ class Digiteal extends PaymentModule
         $digitealPaymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $digitealPaymentOption->setModuleName($this->name)
             ->setCallToActionText($this->l('Pay online'))
-            ->setAction($this->context->link->getModuleLink($this->name, 'redirect', array(), true));
+            ->setAction($this->context->link->getModuleLink($this->name, 'redirect', [], true));
 
         $logo = $this->getPaymentLogo();
         if (!is_null($logo)) {
             $digitealPaymentOption->setLogo(Media::getMediaPath($logo));
         }
+
         return [$digitealPaymentOption];
     }
 
@@ -227,18 +234,17 @@ class Digiteal extends PaymentModule
     {
         $order = isset($params['order']) ? $params['order'] : $params['objOrder'];
 
-        if (! $this->active || ($order->module != $this->name)) {
+        if (!$this->active || ($order->module != $this->name)) {
             return;
         }
 
         $state = $order->getCurrentState();
-        if (in_array($state, array(Configuration::get('PS_OS_PAYMENT'), Configuration::get('PS_OS_OUTOFSTOCK'), Configuration::get('PS_OS_OUTOFSTOCK_UNPAID'))))
-        {
-            $smartVars = array(
+        if (in_array($state, [Configuration::get('PS_OS_PAYMENT'), Configuration::get('PS_OS_OUTOFSTOCK'), Configuration::get('PS_OS_OUTOFSTOCK_UNPAID')])) {
+            $smartVars = [
                 'total_to_pay' => Tools::displayPrice($params['total_to_pay'], $params['currencyObj'], false),
-                'status' => 'ok',
-                'id_order' => $order->id
-            );
+                'status'       => 'ok',
+                'id_order'     => $order->id,
+            ];
             if (isset($order->reference) && !empty($order->reference)) {
                 $smartVars['reference'] = $order->reference;
             }
@@ -246,21 +252,23 @@ class Digiteal extends PaymentModule
         } else {
             $this->smarty->assign('status', 'failed');
         }
+
         return $this->display(__FILE__, 'payment_return.tpl');
     }
 
     /**
      * @param $params
+     *
      * @return array|void
      */
     public function hookDisplayPaymentEU($params)
     {
-        if (! $this->active) {
+        if (!$this->active) {
             return;
         }
 
         // Currency support.
-        if (! $this->checkCurrency($params['cart'])) {
+        if (!$this->checkCurrency($params['cart'])) {
             return;
         }
 
@@ -269,10 +277,10 @@ class Digiteal extends PaymentModule
             return;
         }
 
-        $payment_options = array(
+        $payment_options = [
             'cta_text' => $this->l('Pay online'),
-            'action' => $this->context->link->getModuleLink($this->name, 'redirect', array(), true)
-        );
+            'action'   => $this->context->link->getModuleLink($this->name, 'redirect', [], true),
+        ];
         $logo = $this->getPaymentLogo();
 
         if (!is_null($logo)) {
@@ -284,12 +292,12 @@ class Digiteal extends PaymentModule
 
     public function hookPayment($params)
     {
-        if (! $this->active) {
+        if (!$this->active) {
             return;
         }
 
         // Currency support.
-        if (! $this->checkCurrency($params['cart'])) {
+        if (!$this->checkCurrency($params['cart'])) {
             return;
         }
 
@@ -298,21 +306,23 @@ class Digiteal extends PaymentModule
             return;
         }
 
-        $payment_options = array(
+        $payment_options = [
             'cta_text' => $this->l('Pay online'),
-            'action' => $this->context->link->getModuleLink($this->name, 'redirect', array(), true)
-        );
+            'action'   => $this->context->link->getModuleLink($this->name, 'redirect', [], true),
+        ];
         $logo = $this->getPaymentLogo();
         if (!is_null($logo)) {
             $payment_options['logo'] = $logo;
         }
 
         $this->smarty->assign($payment_options);
+
         return $this->display(__FILE__, 'payment.tpl');
     }
 
     /**
      * @param $cart
+     *
      * @return bool
      */
     public function checkCurrency($cart)
@@ -326,6 +336,7 @@ class Digiteal extends PaymentModule
                 }
             }
         }
+
         return false;
     }
 
@@ -337,7 +348,7 @@ class Digiteal extends PaymentModule
         if (isset($this->companyStatus)) {
             $payment_logos = $this->companyStatus->getPaymentMethodsLogos();
             if (!is_null($payment_logos)) {
-                $file = _PS_MODULE_DIR_ . $this->name . '/views/img/logos/' . $payment_logos . '.svg';
+                $file = _PS_MODULE_DIR_.$this->name.'/views/img/logos/'.$payment_logos.'.svg';
                 if (!file_exists($file)) {
                     $payment_methods = $this->companyStatus->getPaymentMethodsAsArray();
                     if (count($payment_methods) > 0) {
@@ -345,18 +356,20 @@ class Digiteal extends PaymentModule
                     }
                 }
                 if (version_compare(_PS_VERSION_, '1.6', '<')) {
-                    return Tools::getProtocol().Tools::getMediaServer($file) .'/modules/'. $this->name . '/views/img/logos/' . $payment_logos . '.svg';
+                    return Tools::getProtocol().Tools::getMediaServer($file).'/modules/'.$this->name.'/views/img/logos/'.$payment_logos.'.svg';
                 } else {
                     return Media::getMediaPath($file);
                 }
             }
         }
+
         return null;
     }
 
     /**
-     * @return false|string
      * @throws PrestaShopException
+     *
+     * @return false|string
      */
     public function getContent()
     {
@@ -368,27 +381,27 @@ class Digiteal extends PaymentModule
                 $shopname = Configuration::get('PS_SHOP_NAME');
                 $lang = $this->context->language->iso_code;
                 if ($roadmap) {
-                    $query = array('v' => $this->version, 's' => $shopname, 'l' => $lang);
-                    $digiteal_roadmap = 'https://'.$roadmap.'/digiteal.php?' .http_build_query($query);
+                    $query = ['v' => $this->version, 's' => $shopname, 'l' => $lang];
+                    $digiteal_roadmap = 'https://'.$roadmap.'/digiteal.php?'.http_build_query($query);
                 }
             } else {
                 $digiteal_roadmap = $this->context->link->getAdminLink('AdminDigitealRoadmap');
             }
         }
 
-        $smartyVars = array(
+        $smartyVars = [
             'digiteal_description' => $this->description,
-            'form_action' => AdminController::$currentIndex.'&configure='.$this->name.'&token='.Tools::getAdminTokenLite('AdminModules'),
-            'reinit_module' => AdminController::$currentIndex.'&configure='.$this->name.'&'.self::REINITIALIZE_MODULE.'&token='.Tools::getAdminTokenLite('AdminModules'),
-            'reinit_submit' => self::REINITIALIZE_MODULE,
-            'digiteal_roadmap' => $digiteal_roadmap
-        );
+            'form_action'          => AdminController::$currentIndex.'&configure='.$this->name.'&token='.Tools::getAdminTokenLite('AdminModules'),
+            'reinit_module'        => AdminController::$currentIndex.'&configure='.$this->name.'&'.self::REINITIALIZE_MODULE.'&token='.Tools::getAdminTokenLite('AdminModules'),
+            'reinit_submit'        => self::REINITIALIZE_MODULE,
+            'digiteal_roadmap'     => $digiteal_roadmap,
+        ];
 
         $nextStep = 1;
 
         if (Tools::isSubmit(self::REINITIALIZE_MODULE)) {
             $this->companyStatus->emptyAndReload();
-            $smartyVars ['messageSuccess'] = $this->l('The module has been successfully reset.');
+            $smartyVars['messageSuccess'] = $this->l('The module has been successfully reset.');
         } elseif (Tools::isSubmit(self::SUBMIT_STEP_1)) {
             if (Tools::getIsset('vatNumber')) {
                 $this->companyStatus->setVatNumber(Tools::getValue('vatNumber'));
@@ -400,11 +413,10 @@ class Digiteal extends PaymentModule
                 $vatNumber = Tools::getValue('vatNumber');
                 if ($vatNumber !== $this->companyStatus->getVatNumber()) {
                     //Do nothing : this means that user force VAT in source code. This should never occur.
-                }
-                else {
+                } else {
                     $this->companyStatus->setCompanyName(Tools::getValue('companyName'));
                     $this->companyStatus->setContactPersonEmail(Tools::getValue('contactPersonEmail'));
-                    $postPaymentMethods = array();
+                    $postPaymentMethods = [];
                     $paymentMethods = DigitealPaymentMethod::getMethods();
                     foreach ($paymentMethods as $paymentMethod) {
                         if (Tools::getIsset('paymentMethods_'.strtolower($paymentMethod))) {
@@ -419,9 +431,9 @@ class Digiteal extends PaymentModule
             }
         } elseif (Tools::isSubmit(self::SUBMIT_STEP_5)) {
             if (Tools::getIsset('contactPersonEmail') && Tools::getIsset('contactPersonPassword')) {
-                $shop_url = Tools::getCurrentUrlProtocolPrefix() . htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8') . __PS_BASE_URI__;
-                $webhookValidationLink = $shop_url . 'modules/digiteal/validation.php';
-                $webhookErrorLink = $shop_url . 'modules/digiteal/error.php';
+                $shop_url = Tools::getCurrentUrlProtocolPrefix().htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__;
+                $webhookValidationLink = $shop_url.'modules/digiteal/validation.php';
+                $webhookErrorLink = $shop_url.'modules/digiteal/error.php';
                 if ($this->companyStatus->generateWebhookConfiguration(
                     $webhookValidationLink,
                     $webhookErrorLink,
@@ -436,7 +448,7 @@ class Digiteal extends PaymentModule
             }
         } elseif (Tools::isSubmit(self::SUBMIT_STEP_6)) {
             if ($this->companyStatus->checkRestStatus()) {
-                $smartyVars ['messageSuccess'] = $this->l('The information has been updated.');
+                $smartyVars['messageSuccess'] = $this->l('The information has been updated.');
 
                 if (Tools::getIsset('selectedIban')) {
                     $ibans = $this->companyStatus->getIbansAsArray();
@@ -467,40 +479,41 @@ class Digiteal extends PaymentModule
                         }
                     }
                 } else {
-                    $smartyVars ['messageError'] = $this->l('Please, make sure you have filled in the right information.');
+                    $smartyVars['messageError'] = $this->l('Please, make sure you have filled in the right information.');
                 }
             }
         }
 
         if ($nextStep === 1) {
-            $smartyVars ['settings_step'] = 1;
-            $smartyVars ['submit_name'] = self::SUBMIT_STEP_1;
-            $smartyVars ['submit_label'] = $this->l('Start the status check');
-            $smartyVars ['inputs'] = $this->getInputsStep1();
+            $smartyVars['settings_step'] = 1;
+            $smartyVars['submit_name'] = self::SUBMIT_STEP_1;
+            $smartyVars['submit_label'] = $this->l('Start the status check');
+            $smartyVars['inputs'] = $this->getInputsStep1();
         } elseif ($nextStep === 2) {
-            $smartyVars ['settings_step'] = 2;
-            $smartyVars ['submit_name'] = self::SUBMIT_STEP_2;
-            $smartyVars ['submit_label'] = $this->l('Generate registration link');
-            $smartyVars ['inputs'] = $this->getInputsStep2();
+            $smartyVars['settings_step'] = 2;
+            $smartyVars['submit_name'] = self::SUBMIT_STEP_2;
+            $smartyVars['submit_label'] = $this->l('Generate registration link');
+            $smartyVars['inputs'] = $this->getInputsStep2();
         } elseif ($nextStep === 3) {
-            $smartyVars ['settings_step'] = 3;
-            $smartyVars ['inputs'] = $this->getInputsStep3();
+            $smartyVars['settings_step'] = 3;
+            $smartyVars['inputs'] = $this->getInputsStep3();
         } elseif ($nextStep === 4) {
-            $smartyVars ['settings_step'] = 4;
-            $smartyVars ['inputs'] = $this->getInputsStep4();
+            $smartyVars['settings_step'] = 4;
+            $smartyVars['inputs'] = $this->getInputsStep4();
         } elseif ($nextStep === 5) {
-            $smartyVars ['settings_step'] = 5;
-            $smartyVars ['submit_name'] = self::SUBMIT_STEP_5;
-            $smartyVars ['submit_label'] = $this->l('Finalize the configuration');
-            $smartyVars ['inputs'] = $this->getInputsStep5();
-        } elseif ($nextStep ===6) {
-            $smartyVars ['settings_step'] = 6;
-            $smartyVars ['submit_name'] = self::SUBMIT_STEP_6;
-            $smartyVars ['submit_label'] = $this->l('Update');
-            $smartyVars ['inputs'] = $this->getInputsStep6();
+            $smartyVars['settings_step'] = 5;
+            $smartyVars['submit_name'] = self::SUBMIT_STEP_5;
+            $smartyVars['submit_label'] = $this->l('Finalize the configuration');
+            $smartyVars['inputs'] = $this->getInputsStep5();
+        } elseif ($nextStep === 6) {
+            $smartyVars['settings_step'] = 6;
+            $smartyVars['submit_name'] = self::SUBMIT_STEP_6;
+            $smartyVars['submit_label'] = $this->l('Update');
+            $smartyVars['inputs'] = $this->getInputsStep6();
         }
 
         $this->smarty->assign($smartyVars);
+
         return $this->display(__FILE__, 'views/templates/admin/settings.tpl');
     }
 
@@ -509,16 +522,16 @@ class Digiteal extends PaymentModule
      */
     protected function getInputsStep1()
     {
-        return array(
-            array(
-                'type' => 'text',
-                'label' => $this->l('VAT number'),
-                'name' => 'vatNumber',
-                'desc' => $this->l('The intra-community VAT number of your company.'),
-                'value' => $this->companyStatus->getVatNumber(),
-                'required' => true
-            ),
-        );
+        return [
+            [
+                'type'     => 'text',
+                'label'    => $this->l('VAT number'),
+                'name'     => 'vatNumber',
+                'desc'     => $this->l('The intra-community VAT number of your company.'),
+                'value'    => $this->companyStatus->getVatNumber(),
+                'required' => true,
+            ],
+        ];
     }
 
     /**
@@ -526,45 +539,45 @@ class Digiteal extends PaymentModule
      */
     protected function getInputsStep2()
     {
-        return array(
-            array(
-                'type' => 'hidden',
-                'name' => 'integratorID',
-                'value' => $this->companyStatus->getKpiid()
-            ),
-            array(
-                'type' => 'text',
-                'label' => $this->l('VAT number'),
-                'name' => 'vatNumber',
-                'desc' => $this->l('The intra-community VAT number of your company.'),
-                'value' => $this->companyStatus->getVatNumber(),
-                'disabled' => true
-            ),
-            array(
-                'type' => 'text',
-                'label' => $this->l('Name of the company'),
-                'name' => 'companyName',
-                'desc' => $this->l('Your company name as it will appear in Digiteal.'),
-                'value' => $this->companyStatus->getCompanyName(),
-                'required' => true
-            ),
-            array(
-                'type' => 'text',
-                'label' => $this->l('Email'),
-                'name' => 'contactPersonEmail',
-                'desc' => $this->l('The email address of the main contact.'),
-                'value' => $this->companyStatus->getContactPersonEmail(),
-                'required' => true
-            ),
-            array(
-                'type' => 'paymentMethod',
-                'label' => $this->l('Payment methods available at Digiteal :'),
-                'name' => 'paymentMethods',
-                'values' => DigitealPaymentMethod::getMethods(),
+        return [
+            [
+                'type'  => 'hidden',
+                'name'  => 'integratorID',
+                'value' => $this->companyStatus->getKpiid(),
+            ],
+            [
+                'type'     => 'text',
+                'label'    => $this->l('VAT number'),
+                'name'     => 'vatNumber',
+                'desc'     => $this->l('The intra-community VAT number of your company.'),
+                'value'    => $this->companyStatus->getVatNumber(),
+                'disabled' => true,
+            ],
+            [
+                'type'     => 'text',
+                'label'    => $this->l('Name of the company'),
+                'name'     => 'companyName',
+                'desc'     => $this->l('Your company name as it will appear in Digiteal.'),
+                'value'    => $this->companyStatus->getCompanyName(),
+                'required' => true,
+            ],
+            [
+                'type'     => 'text',
+                'label'    => $this->l('Email'),
+                'name'     => 'contactPersonEmail',
+                'desc'     => $this->l('The email address of the main contact.'),
+                'value'    => $this->companyStatus->getContactPersonEmail(),
+                'required' => true,
+            ],
+            [
+                'type'     => 'paymentMethod',
+                'label'    => $this->l('Payment methods available at Digiteal :'),
+                'name'     => 'paymentMethods',
+                'values'   => DigitealPaymentMethod::getMethods(),
                 'required' => false,
-                'disabled' => true
-            ),
-        );
+                'disabled' => true,
+            ],
+        ];
     }
 
     /**
@@ -572,14 +585,14 @@ class Digiteal extends PaymentModule
      */
     protected function getInputsStep3()
     {
-        return array(
-            array(
-                'type' => 'link',
+        return [
+            [
+                'type'  => 'link',
                 'label' => $this->l('Your registration form'),
-                'name' =>  $this->l('Go to the form'),
-                'value' => $this->companyStatus->getCompanyRegistrationLink()
-            ),
-        );
+                'name'  => $this->l('Go to the form'),
+                'value' => $this->companyStatus->getCompanyRegistrationLink(),
+            ],
+        ];
     }
 
     /**
@@ -587,7 +600,7 @@ class Digiteal extends PaymentModule
      */
     protected function getInputsStep4()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -595,27 +608,27 @@ class Digiteal extends PaymentModule
      */
     protected function getInputsStep5()
     {
-        return array(
-            array(
-                'type' => 'text',
-                'label' => $this->l('Email'),
-                'name' => 'contactPersonEmail',
-                'desc' => $this->l('The email address of your account with Digiteal.'),
-                'value' => $this->companyStatus->getContactPersonEmail(),
-                'required' => true
-            ),
-            array(
-                'type' => 'password',
-                'label' => $this->l('Password'),
-                'name' => 'contactPersonPassword',
-                'desc' => $this->l('Your Digiteal account password.'),
-                'required' => true
-            ),
-            array(
+        return [
+            [
+                'type'     => 'text',
+                'label'    => $this->l('Email'),
+                'name'     => 'contactPersonEmail',
+                'desc'     => $this->l('The email address of your account with Digiteal.'),
+                'value'    => $this->companyStatus->getContactPersonEmail(),
+                'required' => true,
+            ],
+            [
+                'type'     => 'password',
+                'label'    => $this->l('Password'),
+                'name'     => 'contactPersonPassword',
+                'desc'     => $this->l('Your Digiteal account password.'),
+                'required' => true,
+            ],
+            [
                 'type' => 'alert',
                 'desc' => $this->l('Your password is not stored on your website. The authentication information you provide in this form is used to finalize the configuration and will not be needed again.'),
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -623,39 +636,40 @@ class Digiteal extends PaymentModule
      */
     protected function getInputsStep6()
     {
-        $return = array();
+        $return = [];
         if (count($this->companyStatus->getPaymentMethodsAsArray()) <= 0) {
-            $return[] = array(
+            $return[] = [
                 'type' => 'alert',
-                'desc' => $this->l('Your module is not active because you do not have any payment methods activated. Please contact the Digiteal team to activate one of them') . ' (support@digiteal.eu or <a href="http://support.digiteal.eu" target="_blank">http://support.digiteal.eu</a>) ' . $this->l('and click "Update" button.'),
-            );
+                'desc' => $this->l('Your module is not active because you do not have any payment methods activated. Please contact the Digiteal team to activate one of them').' (support@digiteal.eu or <a href="http://support.digiteal.eu" target="_blank">http://support.digiteal.eu</a>) '.$this->l('and click "Update" button.'),
+            ];
         } elseif (!$this->companyStatus->hasSelectedIban()) {
-            $return[] = array(
+            $return[] = [
                 'type' => 'alert',
                 'desc' => $this->l('Your module is not active because you do not have an IBAN selected. Select one in the list below and click on the "Update" button.'),
-            );
+            ];
         } else {
-            $return[] = array(
+            $return[] = [
                 'type' => 'reinsurance',
                 'desc' => $this->l('Congratulations! The payment module is active on your store and you are ready to receive payments with Digiteal.'),
-            );
+            ];
         }
-        $return[] = array(
-            'type' => 'ibans',
-            'label' => $this->l('IBAN selected:'),
-            'name' => 'selectedIban',
+        $return[] = [
+            'type'     => 'ibans',
+            'label'    => $this->l('IBAN selected:'),
+            'name'     => 'selectedIban',
             'selected' => $this->companyStatus->getSelectedIban(),
-            'values' => $this->companyStatus->getIbansAsArray(),
-            'required' => false
-        );
-        $return[] = array(
-            'type' => 'paymentMethod',
-            'label' => $this->l('The payment methods activated on your store are :'),
-            'name' => 'paymentMethods',
-            'values' => $this->companyStatus->getPaymentMethodsAsArray(),
+            'values'   => $this->companyStatus->getIbansAsArray(),
             'required' => false,
-            'disabled' => true
-        );
+        ];
+        $return[] = [
+            'type'     => 'paymentMethod',
+            'label'    => $this->l('The payment methods activated on your store are :'),
+            'name'     => 'paymentMethods',
+            'values'   => $this->companyStatus->getPaymentMethodsAsArray(),
+            'required' => false,
+            'disabled' => true,
+        ];
+
         return $return;
     }
 }
