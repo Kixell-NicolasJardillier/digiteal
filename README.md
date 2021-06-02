@@ -2,6 +2,10 @@
 
 # Digiteal Official Package for Prestashop
 
+[![StyleCI](https://github.styleci.io/repos/373064684/shield?branch=main)](https://github.styleci.io/repos/373064684?branch=main)
+
+[Download module](https://github.com/Kixell-NicolasJardillier/digiteal/raw/main/digiteal.zip)
+
 | PrestaShop version | Module version |  Repo               | Doc                |  PHP Version |
 |--------------------|----------------|---------------------|--------------------|--------------|
 | 1.5.x to 1.7.x      | 1.x            |  [main]           |                    |   5.6 or greater    |
@@ -10,7 +14,6 @@
 ## About Digiteal
 
 https://www.digiteal.eu/
-
 
 | Features | Advantages |  Benefits |
 |--------------------|----------------|---------------------|
@@ -28,6 +31,7 @@ https://www.digiteal.eu/
 
 ## Installation
 
+[Download module](https://github.com/Kixell-NicolasJardillier/digiteal/raw/main/digiteal.zip)
 
 ### Step 1 
 Fill your VAT number :
