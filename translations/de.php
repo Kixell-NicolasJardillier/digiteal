@@ -1,7 +1,7 @@
 <?php
 
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{digiteal}prestashop>digiteal_4093808c9781fb6ca2ed5ade71deff4d'] = 'Um dieses Modul nutzen zu können, aktivieren Sie bitte cURL (PHP-Erweiterung).';
 $_MODULE['<{digiteal}prestashop>digiteal_9d87f8763d8924da8f7a7d46a409b61b'] = 'Um dieses Modul nutzen zu können, aktivieren Sie bitte allow_url_fopen (PHP-Erweiterung).';
 $_MODULE['<{digiteal}prestashop>digiteal_ca0873f7e5e242dc82296ba2aa7d6f98'] = 'Digiteal';

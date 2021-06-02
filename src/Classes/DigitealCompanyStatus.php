@@ -1,6 +1,6 @@
 <?php
 /**
- * NOTICE OF LICENSE
+ * NOTICE OF LICENSE.
  *
  * Digiteal for PrestaShop is subject to the Academic Free License (AFL 3.0)
  * that is bundled with this package in the file LICENSE.txt.
@@ -10,11 +10,10 @@
  * @author    SARL KIXELL (https://kixell.fr)
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
- * @package   digiteal
+ *
  * @version   1.0.0
  */
-
-if (! defined('_PS_VERSION_')) {
+if (!defined('_PS_VERSION_')) {
     exit();
 }
 
@@ -47,13 +46,15 @@ if (!class_exists('DigitealCompanyStatus', false)) {
         private $selectedPaymentMethods;
 
         /**
-         * Identification number of the company
+         * Identification number of the company.
+         *
          * @var string
          */
         private $identificationNumber;
 
         /**
-         * VAT number of the company
+         * VAT number of the company.
+         *
          * @var string
          */
         private $vatNumber;
@@ -82,7 +83,6 @@ if (!class_exists('DigitealCompanyStatus', false)) {
          * @var string
          */
         private $contactPersonEmail;
-
 
         /**
          * @var string
@@ -380,7 +380,7 @@ if (!class_exists('DigitealCompanyStatus', false)) {
         {
             $properties = get_object_vars($this);
             foreach ($properties as $k => $v) {
-                $key = (string)$k;
+                $key = (string) $k;
                 $this->$key = $this->get($k);
             }
         }
@@ -392,24 +392,25 @@ if (!class_exists('DigitealCompanyStatus', false)) {
         {
             $properties = get_object_vars($this);
             foreach ($properties as $k => $v) {
-                $key = (string)$k;
+                $key = (string) $k;
                 $this->updateValue($key, null);
             }
             $this->load();
         }
 
         /**
-         * Save
+         * Save.
          */
         public function save()
         {
             $properties = get_object_vars($this);
             foreach ($properties as $k => $v) {
-                $key = (string)$k;
-                $this->updateValue($key, (string)$v);
+                $key = (string) $k;
+                $this->updateValue($key, (string) $v);
             }
             $this->updateValue('paymentMethods', $this->paymentMethods);
         }
+
         /*
             public function isStatusReady()
             {
@@ -428,6 +429,7 @@ if (!class_exists('DigitealCompanyStatus', false)) {
             if ($this->canReceiveFunds) {
                 return true;
             }
+
             return false;
         }
 
@@ -439,6 +441,7 @@ if (!class_exists('DigitealCompanyStatus', false)) {
             if ($this->status === 'PROD') {
                 return true;
             }
+
             return false;
         }
 
@@ -450,6 +453,7 @@ if (!class_exists('DigitealCompanyStatus', false)) {
             if (!empty($this->vatNumber)) {
                 return true;
             }
+
             return false;
         }
 
@@ -461,6 +465,7 @@ if (!class_exists('DigitealCompanyStatus', false)) {
             if (!empty($this->companyRegistrationLink)) {
                 return true;
             }
+
             return false;
         }
 
@@ -472,6 +477,7 @@ if (!class_exists('DigitealCompanyStatus', false)) {
             if (!empty($this->selectedIban)) {
                 return true;
             }
+
             return false;
         }
 
@@ -483,7 +489,8 @@ if (!class_exists('DigitealCompanyStatus', false)) {
             if (!empty($this->paymentMethods)) {
                 return json_decode($this->paymentMethods, true);
             }
-            return array();
+
+            return [];
         }
 
         /**
@@ -492,11 +499,13 @@ if (!class_exists('DigitealCompanyStatus', false)) {
         public function getPaymentMethodsLogos()
         {
             if (!empty($this->paymentMethods)) {
-                $payment_methods =  json_decode($this->paymentMethods, true);
+                $payment_methods = json_decode($this->paymentMethods, true);
                 sort($payment_methods);
                 $str = implode('-', $payment_methods);
+
                 return strtolower($str);
             }
+
             return null;
         }
 
@@ -508,12 +517,14 @@ if (!class_exists('DigitealCompanyStatus', false)) {
             if (!empty($this->ibans)) {
                 return json_decode($this->ibans, true);
             }
-            return array();
+
+            return [];
         }
 
         /**
-         * @return bool
          * @throws \Exception
+         *
+         * @return bool
          */
         public function checkRestStatus()
         {
@@ -523,7 +534,7 @@ if (!class_exists('DigitealCompanyStatus', false)) {
             }
 
             $client = new DigitealRest();
-            $requestData = array('vatNumber' => $this->vatNumber);
+            $requestData = ['vatNumber' => $this->vatNumber];
 
             if (false !== ($response = $client->get('/api/v1/integrator/company-info', $requestData))) {
                 DigitealLogger::logInfo(var_export($response, true));
@@ -533,9 +544,9 @@ if (!class_exists('DigitealCompanyStatus', false)) {
                         $errorMessage = DigitealTools::findInArray('errorMessage', $response);
                         $errorSubjects = DigitealTools::findInArray('errorSubjects', $response);
                         $requestId = DigitealTools::findInArray('requestId', $response);
-                        DigitealLogger::logError('[checkRestStatus] requestId: ' . var_export($requestId, true));
-                        DigitealLogger::logError('[checkRestStatus] errorSubjects: ' . var_export($errorSubjects, true));
-                        DigitealLogger::logError('[checkRestStatus] errorMessage: ' . var_export($errorMessage, true));
+                        DigitealLogger::logError('[checkRestStatus] requestId: '.var_export($requestId, true));
+                        DigitealLogger::logError('[checkRestStatus] errorSubjects: '.var_export($errorSubjects, true));
+                        DigitealLogger::logError('[checkRestStatus] errorMessage: '.var_export($errorMessage, true));
                     } else {
                         $this->status = DigitealTools::findInArray('status', $response);
                         $this->canReceiveFunds = DigitealTools::findInArray('canReceiveFunds', $response);
@@ -555,14 +566,17 @@ if (!class_exists('DigitealCompanyStatus', false)) {
                             $paymentMethods = DigitealPaymentMethod::cleanPaymentMethods($paymentMethods);
                             $this->paymentMethods = strtoupper(json_encode($paymentMethods));
                             $this->save();
+
                             return true;
                         } else {
                             $this->save();
+
                             return true;
                         }
                     }
                 }
             }
+
             return false;
         }
 
@@ -571,25 +585,29 @@ if (!class_exists('DigitealCompanyStatus', false)) {
          */
         public function generateCompanyRegistrationLink()
         {
-            $url = DigitealRest::END_POINT . '/#/register/' . $this->contactPersonEmail
-                . '/?vatNumber=' . $this->vatNumber
-                . '&companyName=' . $this->companyName
-                . '&paymentMethods=' . $this->paymentMethods
-                . '&integratorID=' . $this->kpiid
-                . '&forBusiness=true&pack=START';
+            $url = DigitealRest::END_POINT.'/#/register/'.$this->contactPersonEmail
+                .'/?vatNumber='.$this->vatNumber
+                .'&companyName='.$this->companyName
+                .'&paymentMethods='.$this->paymentMethods
+                .'&integratorID='.$this->kpiid
+                .'&forBusiness=true&pack=START';
             $this->updateValue('companyRegistrationLink', $url);
             $this->load();
+
             return $url;
         }
 
         /**
          * Call API to configure PAYMENT_INITIATED and PAYMENT_INITIATION_ERROR webhook.
+         *
          * @param $validationUrl
          * @param $errorUrl
          * @param $username
          * @param $password
-         * @return bool
+         *
          * @throws \Exception
+         *
+         * @return bool
          */
         public function generateWebhookConfiguration($validationUrl, $errorUrl, $username, $password)
         {
@@ -608,27 +626,31 @@ if (!class_exists('DigitealCompanyStatus', false)) {
                     return true;
                 }
             }
+
             return false;
         }
 
         /**
          * Call API to configure a webhook.
+         *
          * @param $type
          * @param $url
          * @param $username
          * @param $password
-         * @return bool
+         *
          * @throws \Exception
+         *
+         * @return bool
          */
         private function restGenerateWebhook($type, $url, $username, $password)
         {
             $client = new DigitealRest();
 
-            $requestData = array(
+            $requestData = [
                 'type' => $type,
-                'url' => $url
-            );
-            $authData = $username . ':' . $password;
+                'url'  => $url,
+            ];
+            $authData = $username.':'.$password;
             if (false !== ($response = $client->post('/api/v1/webhook', $requestData, $authData))) {
                 if (is_array($response)) {
                     $errorCode = DigitealTools::findInArray('errorCode', $response);
@@ -636,9 +658,10 @@ if (!class_exists('DigitealCompanyStatus', false)) {
                         $errorMessage = DigitealTools::findInArray('errorMessage', $response);
                         $errorSubjects = DigitealTools::findInArray('errorSubjects', $response);
                         $requestId = DigitealTools::findInArray('requestId', $response);
-                        DigitealLogger::logError('[restGenerateWebhook] requestId: ' . var_export($requestId, true));
-                        DigitealLogger::logError('[restGenerateWebhook] errorSubjects: ' . var_export($errorSubjects, true));
-                        DigitealLogger::logError('[restGenerateWebhook] errorMessage: ' . var_export($errorMessage, true));
+                        DigitealLogger::logError('[restGenerateWebhook] requestId: '.var_export($requestId, true));
+                        DigitealLogger::logError('[restGenerateWebhook] errorSubjects: '.var_export($errorSubjects, true));
+                        DigitealLogger::logError('[restGenerateWebhook] errorMessage: '.var_export($errorMessage, true));
+
                         return false;
                     } else {
                         $success = DigitealTools::findInArray('success', $response);
@@ -648,6 +671,7 @@ if (!class_exists('DigitealCompanyStatus', false)) {
                     }
                 }
             }
+
             return false;
         }
     }

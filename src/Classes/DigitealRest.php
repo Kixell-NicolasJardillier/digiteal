@@ -1,6 +1,6 @@
 <?php
 /**
- * NOTICE OF LICENSE
+ * NOTICE OF LICENSE.
  *
  * Digiteal for PrestaShop is subject to the Academic Free License (AFL 3.0)
  * that is bundled with this package in the file LICENSE.txt.
@@ -10,11 +10,10 @@
  * @author    SARL KIXELL (https://kixell.fr)
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
- * @package   digiteal
+ *
  * @version   1.0.0
  */
-
-if (! defined('_PS_VERSION_')) {
+if (!defined('_PS_VERSION_')) {
     exit();
 }
 
@@ -22,12 +21,12 @@ if (!class_exists('DigitealRest', false)) {
     class DigitealRest
     {
         /**
-         * Digiteal endpoint
+         * Digiteal endpoint.
          */
         const END_POINT = 'https://api.digiteal.eu';
 
         /**
-         * Digiteal configuration
+         * Digiteal configuration.
          */
         const DIGITEAL_CONF = 'YToxOntzOjU6ImtwaWlkIjtpOjE5ODQ4MzY5O30=';
 
@@ -45,6 +44,7 @@ if (!class_exists('DigitealRest', false)) {
          * @param $target
          * @param $data
          * @param null $auth
+         *
          * @return array|false|mixed|null
          */
         public function post($target, $data, $auth = null)
@@ -52,23 +52,26 @@ if (!class_exists('DigitealRest', false)) {
             try {
                 return $this->callCurl($target, json_encode($data), $auth);
             } catch (Exception $e) {
-                DigitealLogger::logError('[Exception] DigitealRest:post : ' . $e->getMessage());
+                DigitealLogger::logError('[Exception] DigitealRest:post : '.$e->getMessage());
             }
+
             return false;
         }
 
         /**
          * @param $target
          * @param $data
+         *
          * @return array|false|mixed|null
          */
         public function get($target, $data)
         {
             try {
-                return $this->callCurl($target . '?' . http_build_query($data));
+                return $this->callCurl($target.'?'.http_build_query($data));
             } catch (Exception $e) {
-                DigitealLogger::logError('[Exception] DigitealRest:get : ' . $e->getMessage());
+                DigitealLogger::logError('[Exception] DigitealRest:get : '.$e->getMessage());
             }
+
             return false;
         }
 
@@ -76,8 +79,9 @@ if (!class_exists('DigitealRest', false)) {
         {
             $conf = unserialize(base64_decode(DigitealRest::DIGITEAL_CONF));
             if (isset($conf['kpiid']) && is_int($conf['kpiid'])) {
-                return (int)$conf['kpiid'];
+                return (int) $conf['kpiid'];
             }
+
             return false;
         }
 
@@ -85,31 +89,33 @@ if (!class_exists('DigitealRest', false)) {
          * @param $target
          * @param null $data
          * @param null $auth
-         * @return array|mixed|null
+         *
          * @throws Exception
+         *
+         * @return array|mixed|null
          */
         private function callCurl($target, $data = null, $auth = null)
         {
-            $url = self::END_POINT . $target;
+            $url = self::END_POINT.$target;
 
-            $headers = array(
-                'Content-type: application/json'
-            );
+            $headers = [
+                'Content-type: application/json',
+            ];
 
             if (!empty($auth)) {
-                array_push($headers, 'Authorization: Basic ' . base64_encode($auth));
+                array_push($headers, 'Authorization: Basic '.base64_encode($auth));
             }
 
             $curl = curl_init($url);
-            $options = array(
+            $options = [
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_HTTPHEADER => $headers,
-                CURLOPT_USERAGENT => 'Mozilla/5.0 (Linux; Android 7.0; SM-G892A Build/NRD90M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/60.0.3112.107 Mobile Safari/537.36',
-                CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
-                CURLOPT_HEADER => false,
+                CURLOPT_HTTPHEADER     => $headers,
+                CURLOPT_USERAGENT      => 'Mozilla/5.0 (Linux; Android 7.0; SM-G892A Build/NRD90M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/60.0.3112.107 Mobile Safari/537.36',
+                CURLOPT_HTTPAUTH       => CURLAUTH_BASIC,
+                CURLOPT_HEADER         => false,
                 CURLOPT_CONNECTTIMEOUT => $this->connectionTimeout,
-                CURLOPT_TIMEOUT => $this->timeout
-            );
+                CURLOPT_TIMEOUT        => $this->timeout,
+            ];
             if (!is_null($data)) {
                 $options[CURLOPT_POST] = true;
                 $options[CURLOPT_POSTFIELDS] = $data;
@@ -120,7 +126,7 @@ if (!class_exists('DigitealRest', false)) {
             $info = curl_getinfo($curl);
 
             $http_code = $info['http_code'];
-            if (!in_array($http_code, array(200, 401, 403, 404, 500))) {
+            if (!in_array($http_code, [200, 401, 403, 404, 500])) {
                 $error = curl_error($curl);
                 $errno = curl_errno($curl);
                 curl_close($curl);
@@ -133,7 +139,8 @@ if (!class_exists('DigitealRest', false)) {
                     $msg .= ", cURL error: $error ($errno)";
                 }
 
-                $msg .= ", cURL info: " . print_r($info, true);
+                $msg .= ', cURL info: '.print_r($info, true);
+
                 throw new Exception($msg, '-1');
             }
 
@@ -146,6 +153,7 @@ if (!class_exists('DigitealRest', false)) {
                 }
             }
             curl_close($curl);
+
             return $response;
         }
     }

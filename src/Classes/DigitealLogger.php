@@ -1,6 +1,6 @@
 <?php
 /**
- * NOTICE OF LICENSE
+ * NOTICE OF LICENSE.
  *
  * Digiteal for PrestaShop is subject to the Academic Free License (AFL 3.0)
  * that is bundled with this package in the file LICENSE.txt.
@@ -10,11 +10,10 @@
  * @author    SARL KIXELL (https://kixell.fr)
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
- * @package   digiteal
+ *
  * @version   1.0.0
  */
-
-if (! defined('_PS_VERSION_')) {
+if (!defined('_PS_VERSION_')) {
     exit();
 }
 
@@ -37,21 +36,22 @@ if (!class_exists('DigitealLogger', false)) {
         private static function getInstance()
         {
             if (is_null(self::$_enable)) {
-                self::$_enable = (bool)Configuration::get('KD_ENABLE_LOGGER');
+                self::$_enable = (bool) Configuration::get('KD_ENABLE_LOGGER');
             }
             if (self::$_enable) {
                 if (is_null(self::$_logger)) {
                     self::$_logger = new FileLogger();
-                    $logs_dir = _PS_ROOT_DIR_ . '/var/logs/';
+                    $logs_dir = _PS_ROOT_DIR_.'/var/logs/';
                     if (!file_exists($logs_dir)) {
-                        $logs_dir = _PS_ROOT_DIR_ . '/app/logs/';
+                        $logs_dir = _PS_ROOT_DIR_.'/app/logs/';
                         if (!file_exists($logs_dir)) {
-                            $logs_dir = _PS_ROOT_DIR_ . '/log/';
+                            $logs_dir = _PS_ROOT_DIR_.'/log/';
                         }
                     }
-                    self::$_logger->setFilename($logs_dir.date('Y_m_d') . '_digiteal.log');
+                    self::$_logger->setFilename($logs_dir.date('Y_m_d').'_digiteal.log');
                 }
             }
+
             return self::$_logger;
         }
 
