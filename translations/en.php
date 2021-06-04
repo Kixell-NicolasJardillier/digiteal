@@ -1,7 +1,7 @@
 <?php
 
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{digiteal}prestashop>digiteal_4093808c9781fb6ca2ed5ade71deff4d'] = 'To be able to use this module, please activate cURL (PHP extension).';
 $_MODULE['<{digiteal}prestashop>digiteal_61f7f892ac05589c596ebdb78609666e'] = 'CB, Visa, Mastercard, Ideal, Bancontact, SDD & Digiteal payment module.';
 $_MODULE['<{digiteal}prestashop>digiteal_ff2bd11f9b9f54e7ec5a4acd6c6ee496'] = 'Are you sure you want to uninstall this module ?';
