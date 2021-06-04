@@ -69,15 +69,17 @@ class Digiteal extends PaymentModule
         $this->currentController = Tools::strtolower(Tools::getValue('controller'));
 
         $this->displayName = 'Digiteal';
+
         try { // Mainly used for P1.5
             $id_order = Tools::getValue('id_order');
             if (false !== $id_order) {
-                $order = new Order((int)$id_order);
+                $order = new Order((int) $id_order);
                 if (($order->module == $this->name) && ($this->context->controller instanceof OrderConfirmationController)) {
                     $this->displayName = $order->payment;
                 }
             }
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+        }
     }
 
     /**
