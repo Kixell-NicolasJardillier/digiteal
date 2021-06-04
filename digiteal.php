@@ -63,10 +63,21 @@ class Digiteal extends PaymentModule
             $this->_errors[] = $this->l('To be able to use this module, please activate cURL (PHP extension).');
         }
         parent::__construct();
-        $this->displayName = $this->l('Digiteal');
+
         $this->description = $this->l('CB, Visa, Mastercard, Ideal, Bancontact, SDD & Digiteal payment module.');
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module ?');
         $this->currentController = Tools::strtolower(Tools::getValue('controller'));
+
+        $this->displayName = 'Digiteal';
+        try { // Mainly used for P1.5
+            $id_order = Tools::getValue('id_order');
+            if (false !== $id_order) {
+                $order = new Order((int)$id_order);
+                if (($order->module == $this->name) && ($this->context->controller instanceof OrderConfirmationController)) {
+                    $this->displayName = $order->payment;
+                }
+            }
+        } catch (Exception $e) {}
     }
 
     /**
@@ -86,7 +97,7 @@ class Digiteal extends PaymentModule
             $this->registerHook('paymentReturn');
 
         if ($installed) {
-            $installed = Configuration::updateValue('KD_ENABLE_LOGGER', true) &&
+            $installed = Configuration::updateValue('KD_ENABLE_LOGGER', false) &&
                 Configuration::updateValue('KD_ROADMAP', 'kixell.fr') &&
                 Configuration::updateValue('KD_ENABLE_ROADMAP', true);
         }
@@ -194,6 +205,9 @@ class Digiteal extends PaymentModule
         if ($moduleName === $this->name) {
             $this->context->controller->addJS($this->_path.'views/js/back.js');
             $this->context->controller->addCSS($this->_path.'views/css/back.css');
+            if (version_compare(_PS_VERSION_, '1.6', '<')) {
+                $this->context->controller->addCSS($this->_path.'views/css/back-1.5.css');
+            }
         }
     }
 
