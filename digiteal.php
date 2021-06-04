@@ -175,12 +175,13 @@ class Digiteal extends PaymentModule
         $tab->class_name = 'AdminDigitealRoadmap';
         $tab->module = 'digiteal';
         $tab->active = 0;
-        $tab->id_parent = (int)Tab::getIdFromClassName('DEFAULT');
+        $tab->id_parent = (int) Tab::getIdFromClassName('DEFAULT');
         $languages = Language::getLanguages();
-        $tab->name = array();
+        $tab->name = [];
         foreach ($languages as $lang) {
             $tab->name[$lang['id_lang']] = 'digiteal';
         }
+
         return $tab->add();
     }
 
@@ -189,11 +190,13 @@ class Digiteal extends PaymentModule
      */
     private function uninstallTab()
     {
-        $idTab = (int)Tab::getIdFromClassName('AdminDigitealRoadmap');
+        $idTab = (int) Tab::getIdFromClassName('AdminDigitealRoadmap');
         if ($idTab) {
             $tab = new Tab($idTab);
+
             return $tab->delete();
         }
+
         return true;
     }
 
