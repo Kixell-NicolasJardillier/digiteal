@@ -272,28 +272,30 @@ class Digiteal extends PaymentModule
      */
     public function hookPaymentReturn($params)
     {
-        $order = isset($params['order']) ? $params['order'] : $params['objOrder'];
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $order = isset($params['order']) ? $params['order'] : $params['objOrder'];
 
-        if (!$this->active || ($order->module != $this->name)) {
-            return;
-        }
-
-        $state = $order->getCurrentState();
-        if (in_array($state, [Configuration::get('PS_OS_PAYMENT'), Configuration::get('PS_OS_OUTOFSTOCK'), Configuration::get('PS_OS_OUTOFSTOCK_UNPAID')])) {
-            $smartVars = [
-                'total_to_pay' => Tools::displayPrice($params['total_to_pay'], $params['currencyObj'], false),
-                'status'       => 'ok',
-                'id_order'     => $order->id,
-            ];
-            if (isset($order->reference) && !empty($order->reference)) {
-                $smartVars['reference'] = $order->reference;
+            if (!$this->active || ($order->module != $this->name)) {
+                return;
             }
-            $this->smarty->assign($smartVars);
-        } else {
-            $this->smarty->assign('status', 'failed');
-        }
 
-        return $this->display(__FILE__, 'payment_return.tpl');
+            $state = $order->getCurrentState();
+            if (in_array($state, [Configuration::get('PS_OS_PAYMENT'), Configuration::get('PS_OS_OUTOFSTOCK'), Configuration::get('PS_OS_OUTOFSTOCK_UNPAID')])) {
+                $smartVars = [
+                    'total_to_pay' => Tools::displayPrice($params['total_to_pay'], $params['currencyObj'], false),
+                    'status'       => 'ok',
+                    'id_order'     => $order->id,
+                ];
+                if (isset($order->reference) && !empty($order->reference)) {
+                    $smartVars['reference'] = $order->reference;
+                }
+                $this->smarty->assign($smartVars);
+            } else {
+                $this->smarty->assign('status', 'failed');
+            }
+
+            return $this->display(__FILE__, 'payment_return.tpl');
+        }
     }
 
     /**

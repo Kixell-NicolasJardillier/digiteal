@@ -1,16 +1,15 @@
 <?php
 
 global $_MODULE;
-$_MODULE = [];
+$_MODULE = array();
 $_MODULE['<{digiteal}prestashop>digiteal_4093808c9781fb6ca2ed5ade71deff4d'] = 'Om deze module te kunnen gebruiken, moet u cURL (PHP-extensie) activeren.';
-$_MODULE['<{digiteal}prestashop>digiteal_9d87f8763d8924da8f7a7d46a409b61b'] = 'Om deze module te kunnen gebruiken, dient u allow_url_fopen (PHP-extensie) te activeren.';
-$_MODULE['<{digiteal}prestashop>digiteal_ca0873f7e5e242dc82296ba2aa7d6f98'] = 'Digiteal';
 $_MODULE['<{digiteal}prestashop>digiteal_61f7f892ac05589c596ebdb78609666e'] = 'CB, Visa, Mastercard, Ideal, Bancontact, SDD & SCT betalingsmodule.';
 $_MODULE['<{digiteal}prestashop>digiteal_ff2bd11f9b9f54e7ec5a4acd6c6ee496'] = 'Weet u zeker dat u deze module wilt verwijderen ?';
 $_MODULE['<{digiteal}prestashop>digiteal_95a2fc377595a759b0d73d500d575a39'] = 'Een of meer hooks die nodig zijn voor de module konden niet worden opgeslagen.';
 $_MODULE['<{digiteal}prestashop>digiteal_67503903946113bd68854fd8d765d386'] = 'Online betalen';
 $_MODULE['<{digiteal}prestashop>digiteal_c099a1af6a64af82dfd2454666597619'] = 'De module is succesvol gereset.';
 $_MODULE['<{digiteal}prestashop>digiteal_67af050cdb60dfd2dc2b604aad2640ef'] = 'De informatie is bijgewerkt';
+$_MODULE['<{digiteal}prestashop>digiteal_7db373112c2adcd1241cd9b8d97879a9'] = 'Controleer of u de juiste informatie heeft ingevuld.';
 $_MODULE['<{digiteal}prestashop>digiteal_aa2fc11f2949329f6ac9b8e5430579d5'] = 'Start de statuscontrole';
 $_MODULE['<{digiteal}prestashop>digiteal_3142653f21e2016c1ad2f1dd901fa12a'] = 'Genereer registratielink';
 $_MODULE['<{digiteal}prestashop>digiteal_631cd4374cd3af2d6143593903f4d73d'] = 'Afronden van de configuratie';
@@ -63,3 +62,12 @@ $_MODULE['<{digiteal}prestashop>confirmation-1.7_f1c9d9cefe44087e91569ae186d02e8
 $_MODULE['<{digiteal}prestashop>confirmation-1.7_a8345067406e78165fd39052e3c17f9f'] = 'Wacht even, u wordt doorgestuurd naar de orderbevestigingspagina.';
 $_MODULE['<{digiteal}prestashop>confirmation-1.7_efeb369cccbd560588a756610865664c'] = 'in';
 $_MODULE['<{digiteal}prestashop>confirmation-1.7_783e8e29e6a8c3e22baa58a19420eb4f'] = 'seconden';
+$_MODULE['<{digiteal}prestashop>payment_return_88526efe38fd18179a127024aba8c1d7'] = 'Uw bestelling op %s is voltooid.';
+$_MODULE['<{digiteal}prestashop>payment_return_33236e7acf8624f25d4fe5d531631563'] = 'Uw ordernummer #%d op';
+$_MODULE['<{digiteal}prestashop>payment_return_75fbf512d744977d62599cc3f0ae2bb4'] = 'is compleet.';
+$_MODULE['<{digiteal}prestashop>payment_return_653e8b163873f9087bc680c040afdd48'] = 'Uw orderreferentie %s op';
+$_MODULE['<{digiteal}prestashop>payment_return_ee9d464a5f04b1c5f548d1655691ce82'] = 'Wij hebben uw betaling geregistreerd van';
+$_MODULE['<{digiteal}prestashop>payment_return_0db71da7150c27142eef9d22b843b4a9'] = 'Voor vragen of meer informatie kunt u contact opnemen met onze';
+$_MODULE['<{digiteal}prestashop>payment_return_64430ad2835be8ad60c59e7d44e4b0b1'] = 'klantenservice';
+$_MODULE['<{digiteal}prestashop>payment_return_d15feee53d81ea16269e54d4784fa123'] = 'We hebben een probleem opgemerkt met uw bestelling. Als u denkt dat dit een fout is, neem dan gerust contact op met onze';
+$_MODULE['<{digiteal}prestashop>payment_return_66fcf4c223bbf4c7c886d4784e1f62e4'] = 'deskundige klantenserviceteam';

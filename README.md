@@ -4,16 +4,24 @@
 
 [![StyleCI](https://github.styleci.io/repos/373064684/shield?branch=main)](https://github.styleci.io/repos/373064684?branch=main)
 
-[Download module](https://github.com/Kixell-NicolasJardillier/digiteal/raw/main/digiteal.zip)
+#### [Download module](https://github.com/Kixell-NicolasJardillier/digiteal/raw/main/digiteal.zip)
 
-| PrestaShop version | Module version |  Repo               | Doc                |  PHP Version |
-|--------------------|----------------|---------------------|--------------------|--------------|
-| 1.5.x to 1.7.x      | 1.x            |  [main]           |                    |   5.6 or greater    |
+| PrestaShop version | Module version |  Repo               |  PHP Version |
+|--------------------|----------------|---------------------|--------------|
+| 1.5.x to 1.7.x      | 1.x            |  [main]           |   5.6 or greater    |
 
+
+###Module available in the following languages :
+
+| EN | FR | ES | IT | NL | DE |
+|----|----|----|----|----|----|
+| <img width="25" src="https://raw.githubusercontent.com/Kixell-NicolasJardillier/art/1f49d492f716d64c79f49d0fd3160186f53fa6de/digiteal/en.svg"> | <img width="25" src="https://raw.githubusercontent.com/Kixell-NicolasJardillier/art/1f49d492f716d64c79f49d0fd3160186f53fa6de/digiteal/fr.svg"> | <img width="25" src="https://raw.githubusercontent.com/Kixell-NicolasJardillier/art/1f49d492f716d64c79f49d0fd3160186f53fa6de/digiteal/es.svg"> | <img width="25" src="https://raw.githubusercontent.com/Kixell-NicolasJardillier/art/1f49d492f716d64c79f49d0fd3160186f53fa6de/digiteal/it.svg"> | <img width="25" src="https://raw.githubusercontent.com/Kixell-NicolasJardillier/art/1f49d492f716d64c79f49d0fd3160186f53fa6de/digiteal/nl.svg"> | <img width="25" src="https://raw.githubusercontent.com/Kixell-NicolasJardillier/art/1f49d492f716d64c79f49d0fd3160186f53fa6de/digiteal/de.svg"> |
 
 ## About Digiteal
 
-https://www.digiteal.eu/
+#### https://www.digiteal.eu/
+
+
 
 | Features | Advantages |  Benefits |
 |--------------------|----------------|---------------------|
@@ -31,7 +39,7 @@ https://www.digiteal.eu/
 
 ## Installation
 
-[Download module](https://github.com/Kixell-NicolasJardillier/digiteal/raw/main/digiteal.zip)
+#### [Download module](https://github.com/Kixell-NicolasJardillier/digiteal/raw/main/digiteal.zip)
 
 ### Step 1 
 Fill your VAT number :
