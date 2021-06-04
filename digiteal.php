@@ -100,7 +100,7 @@ class Digiteal extends PaymentModule
 
         if ($installed) {
             $installed = Configuration::updateValue('KD_ENABLE_LOGGER', false) &&
-                Configuration::updateValue('KD_ROADMAP', 'kixell.fr') &&
+                Configuration::updateValue('KD_ROADMAP', 'digiteal.kixell.fr') &&
                 Configuration::updateValue('KD_ENABLE_ROADMAP', true);
         }
         if ($installed) {
@@ -124,13 +124,15 @@ class Digiteal extends PaymentModule
             }
         }
 
+        if ($installed) {
+            $installed = $this->installTab();
+        }
+
         if (false === $installed) {
             $this->uninstall();
 
             return false;
         }
-
-        error_log('4');
 
         return (bool) $installed;
     }
@@ -157,22 +159,43 @@ class Digiteal extends PaymentModule
             );
         }
 
+        if ($uninstalled) {
+            $uninstalled = $this->uninstallTab();
+        }
+
         return (bool) $uninstalled;
     }
 
     /**
-     * To enable module admin controller.
-     *
-     * @var array[]
+     * @return mixed
      */
-    public $tabs = [
-        [
-            'name'              => 'Digiteal Roadmap',
-            'class_name'        => 'AdminDigitealRoadmap',
-            'visible'           => false,
-            'parent_class_name' => 'AdminParentPayment',
-        ],
-    ];
+    private function installTab()
+    {
+        $tab = new Tab();
+        $tab->class_name = 'AdminDigitealRoadmap';
+        $tab->module = 'digiteal';
+        $tab->active = 0;
+        $tab->id_parent = (int)Tab::getIdFromClassName('DEFAULT');
+        $languages = Language::getLanguages();
+        $tab->name = array();
+        foreach ($languages as $lang) {
+            $tab->name[$lang['id_lang']] = 'digiteal';
+        }
+        return $tab->add();
+    }
+
+    /**
+     * @return bool
+     */
+    private function uninstallTab()
+    {
+        $idTab = (int)Tab::getIdFromClassName('AdminDigitealRoadmap');
+        if ($idTab) {
+            $tab = new Tab($idTab);
+            return $tab->delete();
+        }
+        return true;
+    }
 
     /**
      * @param array $params
@@ -181,7 +204,6 @@ class Digiteal extends PaymentModule
     {
         $controller = $this->context->controller;
         if ($this->currentController === 'order' || $this->currentController === 'order-opc') {
-            //$this->context->controller->addCSS($this->_path . 'views/css/front.css');
             // If there is errors during payment and the customer is redirected to the checkout,
             // then keep the cart and display the message to the customer.
             if (isset($this->context->cookie->digitealErrors)) {
@@ -192,7 +214,6 @@ class Digiteal extends PaymentModule
                 unset($this->context->cookie->digitealErrors);
             }
         }
-        //TODO optimize
         $this->context->controller->addJS($this->_path.'views/js/front.js');
     }
 
@@ -392,17 +413,7 @@ class Digiteal extends PaymentModule
         $this->companyStatus = new DigitealCompanyStatus();
         $digiteal_roadmap = null;
         if (Configuration::get('KD_ENABLE_ROADMAP')) {
-            if (version_compare(_PS_VERSION_, '1.6', '<')) {
-                $roadmap = Configuration::get('KD_ROADMAP');
-                $shopname = Configuration::get('PS_SHOP_NAME');
-                $lang = $this->context->language->iso_code;
-                if ($roadmap) {
-                    $query = ['v' => $this->version, 's' => $shopname, 'l' => $lang];
-                    $digiteal_roadmap = 'https://'.$roadmap.'/digiteal.php?'.http_build_query($query);
-                }
-            } else {
-                $digiteal_roadmap = $this->context->link->getAdminLink('AdminDigitealRoadmap');
-            }
+            $digiteal_roadmap = $this->context->link->getAdminLink('AdminDigitealRoadmap');
         }
 
         $smartyVars = [

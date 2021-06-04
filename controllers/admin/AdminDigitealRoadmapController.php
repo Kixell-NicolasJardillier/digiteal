@@ -29,7 +29,7 @@ class AdminDigitealRoadmapController extends ModuleAdminController
         $lang = $this->context->language->iso_code;
         if ($roadmap) {
             $query = ['v' => $this->module->version, 's' => $shopname, 'l' => $lang];
-            $content = file_get_contents('https://'.$roadmap.'/digiteal.php?'.http_build_query($query));
+            $content = file_get_contents('https://'.$roadmap.'/index.php?'.http_build_query($query));
         }
         exit($content);
     }

@@ -12,4 +12,4 @@
  * @package   digiteal
  * @version   1.0.0
  */
-.panel{background-color:#ebedf4;border:1px solid #ccced7;color:#585a69;font-size:1.1em;margin:0;padding:1em}.panel-footer{text-align:right;margin:10px}button{border-color:#0db5c0;border-style:solid;border-width:1px;color:#0db5c0;display:inline-block;font-size:medium;margin:10px 0;padding:8px 12px;cursor:pointer}.text-center{text-align:center}.pull-left{float:left}
+.panel{background-color:#ebedf4;border:1px solid #ccced7;color:#585a69;font-size:1.1em;margin:0;padding:1em}.panel-footer{text-align:right;margin:10px;min-height:40px}.btn,button{border-color:#0db5c0;border-style:solid;border-width:1px;color:#0db5c0;display:inline-block;font-size:medium;margin:10px 0;padding:8px 12px;cursor:pointer}.text-center{text-align:center}.pull-left{float:left}
