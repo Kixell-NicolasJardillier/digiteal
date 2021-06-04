@@ -11,7 +11,7 @@
 | 1.5.x to 1.7.x      | 1.x            |  [main]           |   5.6 or greater    |
 
 
-###Module available in the following languages :
+### Module available in the following languages :
 
 | EN | FR | ES | IT | NL | DE |
 |----|----|----|----|----|----|
