@@ -2,6 +2,12 @@
 
 # Digiteal Official Package for Prestashop
 
+### <span style="color:#0db5c0">Reinventing Invoicing and Payment</span>
+
+<span style="color:#0db5c0">CB, Visa, Mastercard, Ideal, Bancontact, SDD & SCT</span>
+
+* * *
+
 [![StyleCI](https://github.styleci.io/repos/373064684/shield?branch=main)](https://github.styleci.io/repos/373064684?branch=main)
 
 #### [Download module](https://github.com/Kixell-NicolasJardillier/digiteal/raw/main/digiteal.zip)
@@ -17,7 +23,7 @@
 |----|----|----|----|----|----|
 | <img width="25" src="https://raw.githubusercontent.com/Kixell-NicolasJardillier/art/1f49d492f716d64c79f49d0fd3160186f53fa6de/digiteal/en.svg"> | <img width="25" src="https://raw.githubusercontent.com/Kixell-NicolasJardillier/art/1f49d492f716d64c79f49d0fd3160186f53fa6de/digiteal/fr.svg"> | <img width="25" src="https://raw.githubusercontent.com/Kixell-NicolasJardillier/art/1f49d492f716d64c79f49d0fd3160186f53fa6de/digiteal/es.svg"> | <img width="25" src="https://raw.githubusercontent.com/Kixell-NicolasJardillier/art/1f49d492f716d64c79f49d0fd3160186f53fa6de/digiteal/it.svg"> | <img width="25" src="https://raw.githubusercontent.com/Kixell-NicolasJardillier/art/1f49d492f716d64c79f49d0fd3160186f53fa6de/digiteal/nl.svg"> | <img width="25" src="https://raw.githubusercontent.com/Kixell-NicolasJardillier/art/1f49d492f716d64c79f49d0fd3160186f53fa6de/digiteal/de.svg"> |
 
-## About Digiteal
+## <span style="color:#0db5c0">About Digiteal</span>
 
 #### https://www.digiteal.eu/
 
@@ -25,19 +31,19 @@
 
 | Features | Advantages |  Benefits |
 |--------------------|----------------|---------------------|
-| Several payment methods available (Visa*, MC*, Carte Bleue*, Bancontact, Ideal, etc.).<br /><br />* following approval of the compliance team| UX adapted to the preferences of the customers | Better satisfaction |
-| No withdrawal of fees in the payout| Easier for the accounting department | Better treasury |
-| Interesting pricing (transaction fees)| Better margin  | More benefits |
-| Module 1.5 to 1.7 supported| Continuity in case of update  | Flexibility |
-| EEA coverage (European Economic Area ; from any IBAN = €) | Can accept payment from international customers | More potential turnover |
-| Easy plug & play module| Quick to integrate  | Reactivity |
-| Sandbox to test the different scenarios | Ease for the test team | Saving time |
-| Go2thepoint documentation | No need to interact during hours with the support | Efficiency |
-| SCT/PIS support | Low transaction fees and higher amounts supportedLow transaction fees and higher amounts supported | More benefits |
-| Webhooks that cover the whole chain | Get payment confirmation before triggering an order/PO | Saving time |
+| Multiple payment methods available (Visa*, MC*, Carte Bleue*, Bancontact, Ideal, etc.).<br /><br />* following approval of the compliance team | Smooth user experience thanks to the interface that seamlessly adapts to different screen sizes | Better satisfaction |
+| No payment fees deducted during payout | Easier for the accounting department | Better treasury |
+| Attractive pricing (transaction fees) | Better margin  | More benefits |
+| Module compatible with Prestashop 1.5 to 1.7 | Continuity in case of update  | Flexibility |
+| EEA coverage (European Economic Area ; from any IBAN = €) | Accept payments from international customers  | More potential turnover |
+| Easy plug & play module| Quick and easy  integration | Reactivity |
+| Sandbox to test the different scenarios | Making it easy for the test team | Saving time |
+| Go2thepoint documentation | No more dealing with support for hours on end. | Efficiency |
+| SCT/PIS support | Low transaction fees and higher amounts supported | Additional benefits |
+| Payment process automation | The order/PO is triggered as soon as the payment is confirmed. | Improved stock management and time saving |
 
 
-## Installation
+## <span style="color:#0db5c0">Installation</span>
 
 #### [Download module](https://github.com/Kixell-NicolasJardillier/digiteal/raw/main/digiteal.zip)
 
