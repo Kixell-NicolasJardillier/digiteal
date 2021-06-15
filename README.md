@@ -27,8 +27,6 @@
 
 #### https://www.digiteal.eu/
 
-
-
 | Features | Advantages |  Benefits |
 |--------------------|----------------|---------------------|
 | Multiple payment methods available (Visa*, MC*, Carte Bleue*, Bancontact, Ideal, etc.).<br /><br />* following approval of the compliance team | Smooth user experience thanks to the interface that seamlessly adapts to different screen sizes | Better satisfaction |
