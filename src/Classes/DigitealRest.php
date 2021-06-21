@@ -11,7 +11,7 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.0
+ * @version   1.0.1
  */
 if (!defined('_PS_VERSION_')) {
     exit();
@@ -21,16 +21,6 @@ if (!class_exists('DigitealRest', false)) {
     class DigitealRest
     {
         /**
-         * Digiteal endpoint.
-         */
-        const END_POINT = 'https://api.digiteal.eu';
-
-        /**
-         * Digiteal configuration.
-         */
-        const DIGITEAL_CONF = 'YToxOntzOjU6ImtwaWlkIjtpOjE5ODQ4MzY5O30=';
-
-        /**
          * @var int
          */
         private $connectionTimeout = 45;
@@ -39,6 +29,32 @@ if (!class_exists('DigitealRest', false)) {
          * @var int
          */
         private $timeout = 45;
+
+        /**
+         * @return string
+         */
+        public static function getEndPoint($mode = null)
+        {
+            if (Configuration::get('KD_MODE') || $mode) {
+                return 'https://test.digiteal.eu';
+            }
+            else {
+                return 'https://api.digiteal.eu';
+            }
+        }
+
+        /**
+         * @return string
+         */
+        public static function getDigitealConfig($mode = null)
+        {
+            if (Configuration::get('KD_MODE') || $mode) {
+                return 'YToxOntzOjU6ImtwaWlkIjtpOjI3MzAxO30=';
+            }
+            else {
+                return 'YToxOntzOjU6ImtwaWlkIjtpOjE5ODQ4MzY5O30=';
+            }
+        }
 
         /**
          * @param $target
@@ -75,9 +91,9 @@ if (!class_exists('DigitealRest', false)) {
             return false;
         }
 
-        public static function getConf()
+        public static function getConf($mode = null)
         {
-            $conf = unserialize(base64_decode(DigitealRest::DIGITEAL_CONF));
+            $conf = unserialize(base64_decode(self::getDigitealConfig($mode)));
             if (isset($conf['kpiid']) && is_int($conf['kpiid'])) {
                 return (int) $conf['kpiid'];
             }
@@ -96,7 +112,7 @@ if (!class_exists('DigitealRest', false)) {
          */
         private function callCurl($target, $data = null, $auth = null)
         {
-            $url = self::END_POINT.$target;
+            $url = self::getEndPoint().$target;
 
             $headers = [
                 'Content-type: application/json',

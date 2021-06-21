@@ -11,7 +11,7 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.0
+ * @version   1.0.1
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -99,13 +99,18 @@ class Digiteal extends PaymentModule
             $this->registerHook('paymentReturn');
 
         if ($installed) {
-            $installed = Configuration::updateValue('KD_ENABLE_LOGGER', false) &&
+            $installed = Configuration::updateValue('KD_ENABLE_LOGGER', 0) &&
                 Configuration::updateValue('KD_ROADMAP', 'digiteal.kixell.fr') &&
-                Configuration::updateValue('KD_ENABLE_ROADMAP', true);
+                Configuration::updateValue('KD_ENABLE_ROADMAP', true) &&
+                Configuration::updateValue('KD_MODE', 0);
         }
         if ($installed) {
             ((false !== ($dc = DigitealRest::getConf())) ?
                 $installed = Configuration::updateValue('KD_KPIID', $dc) : $installed = false);
+        }
+        if ($installed) {
+            ((false !== ($dc = DigitealRest::getConf(true))) ?
+                $installed = Configuration::updateValue('KD_KPIIDT', $dc) : $installed = false);
         }
 
         if ($installed) {
@@ -153,7 +158,9 @@ class Digiteal extends PaymentModule
             $uninstalled &= Configuration::deleteByName('KD_ENABLE_LOGGER') &&
                 Configuration::deleteByName('KD_ROADMAP') &&
                 Configuration::deleteByName('KD_ENABLE_ROADMAP') &&
-                Configuration::deleteByName('KD_KPIID');
+                Configuration::deleteByName('KD_KPIID') &&
+                Configuration::deleteByName('KD_KPIIDT') &&
+                Configuration::deleteByName('KD_MODE');
             $uninstalled &= Db::getInstance()->execute(
                 'DELETE FROM `'._DB_PREFIX_."configuration` WHERE `name` LIKE 'KD_%'"
             );
@@ -436,6 +443,8 @@ class Digiteal extends PaymentModule
             $smartyVars['messageSuccess'] = $this->l('The module has been successfully reset.');
         } elseif (Tools::isSubmit(self::SUBMIT_STEP_1)) {
             if (Tools::getIsset('vatNumber')) {
+                $kdmode = (int) (Tools::getValue('kdmode') == 0 ? 0 : 1);
+                $this->companyStatus->setMode($kdmode);
                 $this->companyStatus->setVatNumber(Tools::getValue('vatNumber'));
                 $this->companyStatus->save();
             }
@@ -516,6 +525,8 @@ class Digiteal extends PaymentModule
             }
         }
 
+        $smartyVars['kdmode'] = $this->companyStatus->getMode();
+
         if ($nextStep === 1) {
             $smartyVars['settings_step'] = 1;
             $smartyVars['submit_name'] = self::SUBMIT_STEP_1;
@@ -555,6 +566,25 @@ class Digiteal extends PaymentModule
     protected function getInputsStep1()
     {
         return [
+            [
+                'type' => ((version_compare(_PS_VERSION_, '1.6', '<')) ? 'radio' : 'switch'),
+                'label' => $this->l('Mode Test'),
+                'name' => 'kdmode',
+                'is_bool' => true,
+                'value' => $this->companyStatus->getMode(),
+                'values' => array(
+                    array(
+                        'id' => 'kdmode_on',
+                        'value' => 1,
+                        'label' => $this->l('Enable')
+                    ),
+                    array(
+                        'id' => 'kdmode_off',
+                        'value' => 0,
+                        'label' => $this->l('Disable')
+                    ),
+                ),
+            ],
             [
                 'type'     => 'text',
                 'label'    => $this->l('VAT number'),

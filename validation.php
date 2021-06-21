@@ -11,7 +11,7 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.0
+ * @version   1.0.1
  */
 require_once dirname(dirname(dirname(__FILE__))).'/config/config.inc.php';
 require_once dirname(__FILE__).'/digiteal.php';

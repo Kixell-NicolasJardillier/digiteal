@@ -10,7 +10,7 @@
 * @copyright Copyright © 2021 - SARL Kixell
 * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
 * @package   digiteal
-* @version   1.0.0
+* @version   1.0.1
 *}
 
 <div class="bootstrap">
@@ -19,6 +19,9 @@
         <h1>
             Digiteal
             <br /><small>{$digiteal_description|escape:'htmlall':'UTF-8'}</small>
+            {if isset($kdmode) && $kdmode == 1}
+                <br /><div style="color: white;margin-top: 10px;background: red;padding: 5px 0;">MODE TEST</div>
+            {/if}
         </h1>
     </div>
     {if isset($messageSuccess)}
@@ -87,6 +90,46 @@
                         <div class="col-lg-6">
                             {if isset($input.desc)}<p class="digiteal-info">{$input.desc}</p>{/if}
                         </div>
+                    {elseif $input.type == 'radio'}
+                        <label class="control-label col-lg-3">{$input.label}</label>
+                        <div class="margin-form col-lg-3">
+                            {foreach $input.values as $value}
+                                <div class="radio {if isset($input.class)}{$input.class}{/if}">
+                                    {strip}
+                                        <label>
+                                            <input type="radio"	name="{$input.name}" id="{$value.id}" value="{$value.value|escape:'html':'UTF-8'}"{if $input.value == $value.value} checked="checked"{/if}{if (isset($input.disabled) && $input.disabled) or (isset($value.disabled) && $value.disabled)} disabled="disabled"{/if}/>
+                                            {$value.label}
+                                        </label>
+                                    {/strip}
+                                </div>
+                                {if isset($value.p) && $value.p}<p class="help-block">{$value.p}</p>{/if}
+                            {/foreach}
+                        </div>
+                        <div class="col-lg-6">
+                            {if isset($input.desc)}<p class="digiteal-info">{$input.desc}</p>{/if}
+                        </div>
+                    {elseif $input.type == 'switch'}
+                    <label class="control-label col-lg-3">{$input.label}</label>
+                    <div class="margin-form col-lg-3">
+                        <span class="switch prestashop-switch fixed-width-lg">
+                            {foreach $input.values as $value}
+                                <input type="radio" name="{$input.name}"{if $value.value == 1} id="{$input.name}_on"{else} id="{$input.name}_off"{/if} value="{$value.value}"{if $input.value == $value.value} checked="checked"{/if}{if (isset($input.disabled) && $input.disabled) or (isset($value.disabled) && $value.disabled)} disabled="disabled"{/if}/>
+                            {strip}
+                                <label {if $value.value == 1} for="{$input.name}_on"{else} for="{$input.name}_off"{/if}>
+                                {if $value.value == 1}
+                                    {l s='Yes'}
+                                {else}
+                                    {l s='No'}
+                                {/if}
+                            </label>
+                            {/strip}
+                            {/foreach}
+                            <a class="slide-button btn"></a>
+                        </span>
+                    </div>
+                    <div class="col-lg-6">
+                        {if isset($input.desc)}<p class="digiteal-info">{$input.desc}</p>{/if}
+                    </div>
                     {elseif $input.type == 'password'}
                         <label class="control-label col-lg-3">{$input.label}</label>
                         <div class="margin-form col-lg-3">

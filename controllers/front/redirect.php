@@ -11,7 +11,7 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.0
+ * @version   1.0.1
  */
 require_once _PS_MODULE_DIR_.'/digiteal/src/Classes/DigitealLogger.php';
 require_once _PS_MODULE_DIR_.'/digiteal/src/Classes/DigitealRest.php';
@@ -42,7 +42,7 @@ class DigitealRedirectModuleFrontController extends ModuleFrontController
             $this->digitealRedirect($this->digitealPageLink($order_page));
         }
 
-        $endpoint = DigitealRest::END_POINT.'/api/v1/payment-request/pay-button/execute';
+        $endpoint = DigitealRest::getEndPoint().'/api/v1/payment-request/pay-button/execute';
         $orderTotal = $cart->getOrderTotal(true, Cart::BOTH);
         $digitealAmountInCents = (float) $orderTotal * 100;
 

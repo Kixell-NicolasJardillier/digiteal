@@ -11,7 +11,7 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.0
+ * @version   1.0.1
  */
 if (!defined('_PS_VERSION_')) {
     exit();
@@ -23,7 +23,17 @@ if (!class_exists('DigitealCompanyStatus', false)) {
         /**
          * @var string
          */
+        private $mode;
+
+        /**
+         * @var string
+         */
         private $kpiid;
+
+        /**
+         * @var string
+         */
+        private $kpiidt;
 
         /**
          * @var string
@@ -114,7 +124,23 @@ if (!class_exists('DigitealCompanyStatus', false)) {
          */
         public function getKpiid()
         {
-            return $this->kpiid;
+            return (1 === (int)$this->mode ? $this->kpiidt : $this->kpiid);
+        }
+
+        /**
+         * @return string
+         */
+        public function getMode()
+        {
+            return $this->mode;
+        }
+
+        /**
+         * @param string $mode
+         */
+        public function setMode($mode)
+        {
+            $this->mode = $mode;
         }
 
         /**
@@ -242,7 +268,7 @@ if (!class_exists('DigitealCompanyStatus', false)) {
          */
         public function getCompanyRegistrationLink()
         {
-            return $this->companyRegistrationLink;
+            return DigitealRest::getEndPoint() . $this->companyRegistrationLink;
         }
 
         /**
@@ -393,7 +419,9 @@ if (!class_exists('DigitealCompanyStatus', false)) {
             $properties = get_object_vars($this);
             foreach ($properties as $k => $v) {
                 $key = (string) $k;
-                $this->updateValue($key, null);
+                if (!in_array($key, ['mode', 'kpiid', 'kpiidt'])) {
+                    $this->updateValue($key, null);
+                }
             }
             $this->load();
         }
@@ -585,11 +613,11 @@ if (!class_exists('DigitealCompanyStatus', false)) {
          */
         public function generateCompanyRegistrationLink()
         {
-            $url = DigitealRest::END_POINT.'/#/register/'.$this->contactPersonEmail
+            $url = '/#/register/'.$this->contactPersonEmail
                 .'/?vatNumber='.$this->vatNumber
                 .'&companyName='.$this->companyName
                 .'&paymentMethods='.$this->paymentMethods
-                .'&integratorID='.$this->kpiid
+                .'&integratorID='.$this->getKpiid()
                 .'&forBusiness=true&pack=START';
             $this->updateValue('companyRegistrationLink', $url);
             $this->load();
