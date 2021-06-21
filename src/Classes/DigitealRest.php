@@ -37,8 +37,7 @@ if (!class_exists('DigitealRest', false)) {
         {
             if (Configuration::get('KD_MODE') || $mode) {
                 return 'https://test.digiteal.eu';
-            }
-            else {
+            } else {
                 return 'https://api.digiteal.eu';
             }
         }
@@ -50,8 +49,7 @@ if (!class_exists('DigitealRest', false)) {
         {
             if (Configuration::get('KD_MODE') || $mode) {
                 return 'YToxOntzOjU6ImtwaWlkIjtpOjI3MzAxO30=';
-            }
-            else {
+            } else {
                 return 'YToxOntzOjU6ImtwaWlkIjtpOjE5ODQ4MzY5O30=';
             }
         }

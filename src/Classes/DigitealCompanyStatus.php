@@ -124,7 +124,7 @@ if (!class_exists('DigitealCompanyStatus', false)) {
          */
         public function getKpiid()
         {
-            return (1 === (int)$this->mode ? $this->kpiidt : $this->kpiid);
+            return 1 === (int) $this->mode ? $this->kpiidt : $this->kpiid;
         }
 
         /**
@@ -268,7 +268,7 @@ if (!class_exists('DigitealCompanyStatus', false)) {
          */
         public function getCompanyRegistrationLink()
         {
-            return DigitealRest::getEndPoint() . $this->companyRegistrationLink;
+            return DigitealRest::getEndPoint().$this->companyRegistrationLink;
         }
 
         /**

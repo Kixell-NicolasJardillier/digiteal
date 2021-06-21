@@ -567,23 +567,23 @@ class Digiteal extends PaymentModule
     {
         return [
             [
-                'type' => ((version_compare(_PS_VERSION_, '1.6', '<')) ? 'radio' : 'switch'),
-                'label' => $this->l('Mode Test'),
-                'name' => 'kdmode',
+                'type'    => ((version_compare(_PS_VERSION_, '1.6', '<')) ? 'radio' : 'switch'),
+                'label'   => $this->l('Mode Test'),
+                'name'    => 'kdmode',
                 'is_bool' => true,
-                'value' => $this->companyStatus->getMode(),
-                'values' => array(
-                    array(
-                        'id' => 'kdmode_on',
+                'value'   => $this->companyStatus->getMode(),
+                'values'  => [
+                    [
+                        'id'    => 'kdmode_on',
                         'value' => 1,
-                        'label' => $this->l('Enable')
-                    ),
-                    array(
-                        'id' => 'kdmode_off',
+                        'label' => $this->l('Enable'),
+                    ],
+                    [
+                        'id'    => 'kdmode_off',
                         'value' => 0,
-                        'label' => $this->l('Disable')
-                    ),
-                ),
+                        'label' => $this->l('Disable'),
+                    ],
+                ],
             ],
             [
                 'type'     => 'text',
