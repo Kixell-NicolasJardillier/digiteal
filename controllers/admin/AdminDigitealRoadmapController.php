@@ -24,6 +24,7 @@ class AdminDigitealRoadmapController extends ModuleAdminController
     public function postProcess()
     {
         $content = '';
+
         try {
             $roadmap = Configuration::get('KD_ROADMAP');
             $shopname = Configuration::get('PS_SHOP_NAME');
@@ -33,7 +34,6 @@ class AdminDigitealRoadmapController extends ModuleAdminController
                 $content = Tools::file_get_contents('https://'.$roadmap.'/index.php?'.http_build_query($query));
             }
         } catch (Exception $e) {
-
         }
         exit($content);
     }
