@@ -11,7 +11,7 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.1
+ * @version   1.0.2
  */
 class AdminDigitealRoadmapController extends ModuleAdminController
 {
@@ -24,12 +24,16 @@ class AdminDigitealRoadmapController extends ModuleAdminController
     public function postProcess()
     {
         $content = '';
-        $roadmap = Configuration::get('KD_ROADMAP');
-        $shopname = Configuration::get('PS_SHOP_NAME');
-        $lang = $this->context->language->iso_code;
-        if ($roadmap) {
-            $query = ['v' => $this->module->version, 's' => $shopname, 'l' => $lang];
-            $content = file_get_contents('https://'.$roadmap.'/index.php?'.http_build_query($query));
+        try {
+            $roadmap = Configuration::get('KD_ROADMAP');
+            $shopname = Configuration::get('PS_SHOP_NAME');
+            $lang = $this->context->language->iso_code;
+            if ($roadmap) {
+                $query = ['v' => $this->module->version, 's' => $shopname, 'l' => $lang];
+                $content = Tools::file_get_contents('https://'.$roadmap.'/index.php?'.http_build_query($query));
+            }
+        } catch (Exception $e) {
+
         }
         exit($content);
     }
