@@ -11,7 +11,7 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.2
+ * @version   1.0.3
  */
 if (!defined('_PS_VERSION_')) {
     exit();
@@ -556,7 +556,6 @@ if (!class_exists('DigitealCompanyStatus', false)) {
          */
         public function checkRestStatus()
         {
-            DigitealLogger::logInfo('[checkRestStatus]');
             if (empty($this->vatNumber)) {
                 return false;
             }
@@ -565,16 +564,12 @@ if (!class_exists('DigitealCompanyStatus', false)) {
             $requestData = ['vatNumber' => $this->vatNumber];
 
             if (false !== ($response = $client->get('/api/v1/integrator/company-info', $requestData))) {
-                DigitealLogger::logInfo(var_export($response, true));
                 if (is_array($response)) {
                     $errorCode = DigitealTools::findInArray('errorCode', $response);
                     if (isset($errorCode)) {
                         $errorMessage = DigitealTools::findInArray('errorMessage', $response);
                         $errorSubjects = DigitealTools::findInArray('errorSubjects', $response);
                         $requestId = DigitealTools::findInArray('requestId', $response);
-                        DigitealLogger::logError('[checkRestStatus] requestId: '.var_export($requestId, true));
-                        DigitealLogger::logError('[checkRestStatus] errorSubjects: '.var_export($errorSubjects, true));
-                        DigitealLogger::logError('[checkRestStatus] errorMessage: '.var_export($errorMessage, true));
                     } else {
                         $this->status = DigitealTools::findInArray('status', $response);
                         $this->canReceiveFunds = DigitealTools::findInArray('canReceiveFunds', $response);
@@ -583,14 +578,15 @@ if (!class_exists('DigitealCompanyStatus', false)) {
                             $this->companyName = DigitealTools::findInArray('companyName', $response);
                             $this->identificationNumber = DigitealTools::findInArray('id', $response);
                             $this->integratorId = DigitealTools::findInArray('integratorId', $response);
-                            $ibans = DigitealTools::findInArray('ibans', $response);
+
+                            $ibans = DigitealTools::findInArray('ibans', $response, []);
                             if (count($ibans) === 1) {
                                 $this->selectedIban = $ibans[0];
                             } else {
                                 $this->selectedIban = null;
                             }
                             $this->ibans = json_encode($ibans);
-                            $paymentMethods = DigitealTools::findInArray('paymentMethods', $response);
+                            $paymentMethods = DigitealTools::findInArray('paymentMethods', $response, []);
                             $paymentMethods = DigitealPaymentMethod::cleanPaymentMethods($paymentMethods);
                             $this->paymentMethods = strtoupper(json_encode($paymentMethods));
                             $this->save();
@@ -686,9 +682,6 @@ if (!class_exists('DigitealCompanyStatus', false)) {
                         $errorMessage = DigitealTools::findInArray('errorMessage', $response);
                         $errorSubjects = DigitealTools::findInArray('errorSubjects', $response);
                         $requestId = DigitealTools::findInArray('requestId', $response);
-                        DigitealLogger::logError('[restGenerateWebhook] requestId: '.var_export($requestId, true));
-                        DigitealLogger::logError('[restGenerateWebhook] errorSubjects: '.var_export($errorSubjects, true));
-                        DigitealLogger::logError('[restGenerateWebhook] errorMessage: '.var_export($errorMessage, true));
 
                         return false;
                     } else {
@@ -699,7 +692,6 @@ if (!class_exists('DigitealCompanyStatus', false)) {
                     }
                 }
             }
-
             return false;
         }
     }

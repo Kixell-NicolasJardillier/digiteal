@@ -11,7 +11,7 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.2
+ * @version   1.0.3
  */
 require_once _PS_MODULE_DIR_.'/digiteal/src/Classes/DigitealLogger.php';
 require_once _PS_MODULE_DIR_.'/digiteal/src/Classes/DigitealRest.php';
@@ -51,6 +51,8 @@ class DigitealRedirectModuleFrontController extends ModuleFrontController
         $errorUrl = Context::getContext()->link->getModuleLink('digiteal', 'error', ['cart_id' => $cart->id], true);
 
         $iso_code = $this->context->language->iso_code;
+
+        $paymentMethod = Tools::getValue('paymentMethod', false);
         $params = [
             'multiple'        => 'true',
             'requesterVAT'    => Configuration::get('KD_VATNUMBER'),
@@ -62,6 +64,10 @@ class DigitealRedirectModuleFrontController extends ModuleFrontController
             'confirmationURL' => $confirmationURL,
             'errorURL'        => $errorUrl,
         ];
+
+        if (false !== $paymentMethod) {
+            $params['paymentMethod'] = $paymentMethod;
+        }
 
         $endpoint .= '?'.http_build_query($params);
 

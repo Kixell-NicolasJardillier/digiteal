@@ -10,7 +10,7 @@
 * @copyright Copyright © 2021 - SARL Kixell
 * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
 * @package   digiteal
-* @version   1.0.2
+* @version   1.0.3
 *}
 
 <div class="bootstrap">
@@ -20,7 +20,7 @@
             Digiteal
             <br /><small>{$digiteal_description|escape:'htmlall':'UTF-8'}</small>
             {if isset($kdmode) && $kdmode == 1}
-                <br /><div style="color: white;margin-top: 10px;background: red;padding: 5px 0;">MODE TEST</div>
+                <br /><div style="color: white;margin-top: 10px;background: #27b5c0;padding: 5px 0;">MODE TEST</div>
             {/if}
         </h1>
     </div>
@@ -38,16 +38,16 @@
     <div class="panel">
         <form id="configuration_form" class="defaultForm form-horizontal digiteal" method="post" action="{$form_action|escape:'htmlall':'UTF-8'}">
             {if $settings_step == 1}
-                <h3 class="digiteal-color">{l s='Configuration' mod='digiteal'}</h3>
+                <h3 class="digiteal-color panel-heading">{l s='Configuration' mod='digiteal'}</h3>
                 <p class="digiteal-intro">{l s='To start the configuration, please enter your VAT number. This step allows us to verify your company\'s status with Digiteal and to assist you in configuring the module.' mod='digiteal'}</p>
 
             {elseif $settings_step == 2}
-                <h3 class="digiteal-color">{l s='Pre-registration' mod='digiteal'}</h3>
+                <h3 class="digiteal-color panel-heading">{l s='Pre-registration' mod='digiteal'}</h3>
                 <p class="digiteal-intro">{l s='Please fill in the information below to generate your registration link with Digiteal.' mod='digiteal'}</p>
 
 
             {elseif $settings_step == 3}
-                <h3 class="digiteal-color">{l s='Pre-registration' mod='digiteal'}</h3>
+                <h3 class="digiteal-color panel-heading">{l s='Pre-registration' mod='digiteal'}</h3>
                 <p class="digiteal-intro">
                     {l s='Access the Digiteal registration form by clicking on the button below (when you create your account with Digiteal, you will receive an email to finalize your registration).' mod='digiteal'}
                     <br />{l s='Once you have completed your registration with Digiteal, you will need to wait for the Digiteal team to validate your account. You will be able to return to the module configuration or click on this link to finalize your configuration:' mod='digiteal'}
@@ -56,21 +56,19 @@
                 </p>
 
             {elseif $settings_step == 4}
-                <h3 class="digiteal-color">{l s='Active account pending validation by Digiteal' mod='digiteal'}</h3>
+                <h3 class="digiteal-color panel-heading">{l s='Active account pending validation by Digiteal' mod='digiteal'}</h3>
                 <p class="digiteal-intro">{l s='Your account is active but awaiting validation by the Digiteal team.' mod='digiteal'}
                 <br />{l s='Once your account has been validated, you can return to the module configuration or click on this link to finalize your configuration:' mod='digiteal'}
                     <a href="#" onClick="window.location.reload();return false;">{l s='Reload the page' mod='digiteal'}</a></p>
 
             {elseif $settings_step == 5}
-                <h3 class="digiteal-color">{l s='Finalization of the configuration' mod='digiteal'}</h3>
+                <h3 class="digiteal-colorpanel-heading">{l s='Finalization of the configuration' mod='digiteal'}</h3>
                 <p class="digiteal-intro">{l s='To finalize, we need to configure the synchronization between the Digiteal platform and your store. To do this, please enter your Digiteal platform connection information:' mod='digiteal'}</p>
 
 
             {elseif $settings_step == 6}
-                <h3 class="digiteal-color">{l s='Configuration completed' mod='digiteal'}</h3>
+                <h3 class="digiteal-color panel-heading">{l s='Configuration completed' mod='digiteal'}</h3>
                 <p class="digiteal-intro">{l s='You can update the settings of this payment module below, and also retrieve your Digiteal account information if it has changed, by clicking the "Update" button below (for example, if you have added a new IBAN and would like it to appear in the list below, or if you have changed your payment method settings).' mod='digiteal'}</p>
-
-
             {/if}
 
 
@@ -220,13 +218,6 @@
         {else}
         </div>
         {/if *}
-    </div>
-
-    <br /><br />
-    <div class="panel">
-        <div style="position: relative;overflow: hidden;padding-top: 10%;">
-            <iframe style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;border: 0;" src="{$digiteal_roadmap}"></iframe>
-        </div>
     </div>
 
 </div>

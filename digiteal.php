@@ -11,7 +11,7 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.2
+ * @version   1.0.3
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -25,7 +25,7 @@ require_once _PS_MODULE_DIR_.'/digiteal/src/includeClasses.php';
 class Digiteal extends PaymentModule
 {
     const MODULE_MIN_VERSION = '1.5.0';
-    const MODULE_MAX_VERSION = '1.7.99';
+    const MODULE_MAX_VERSION = '9.0.0';
 
     const REINITIALIZE_MODULE = 'fds0frk34kv';
     const SUBMIT_STEP_1 = 'g1fds56g4s3dh1';
@@ -49,7 +49,7 @@ class Digiteal extends PaymentModule
     public function __construct()
     {
         $this->name = 'digiteal';
-        $this->version = '1.0.2';
+        $this->version = '1.0.3';
         $this->tab = 'payments_gateways';
         $this->author = 'Kixell';
         $this->controllers = ['redirect', 'confirmation', 'error'];
@@ -93,16 +93,24 @@ class Digiteal extends PaymentModule
             return false;
         }
 
-        $installed = parent::install() &&
-            $this->registerHook('header') &&
-            $this->registerHook('backOfficeHeader') &&
-            $this->registerHook('paymentReturn');
+        if (version_compare(_PS_VERSION_, 1.7, '<')) {
+            $installed = parent::install() &&
+                $this->registerHook('header') &&
+                $this->registerHook('backOfficeHeader') &&
+                $this->registerHook('paymentReturn');
+        }
+        else {
+            $installed = parent::install() &&
+                $this->registerHook('displayHeader') &&
+                $this->registerHook('displayBackOfficeHeader') &&
+                $this->registerHook('paymentReturn');
+        }
+
 
         if ($installed) {
             $installed = Configuration::updateValue('KD_ENABLE_LOGGER', 0) &&
-                Configuration::updateValue('KD_ROADMAP', 'digiteal.kixell.fr') &&
-                Configuration::updateValue('KD_ENABLE_ROADMAP', true) &&
-                Configuration::updateValue('KD_MODE', 0);
+                Configuration::updateValue('KD_MODE', 0) &&
+                Configuration::updateValue('KD_SPLIT_PAYMENT_METHODE', true);
         }
         if ($installed) {
             ((false !== ($dc = DigitealRest::getConf())) ?
@@ -149,10 +157,18 @@ class Digiteal extends PaymentModule
      */
     public function uninstall()
     {
-        $uninstalled = parent::uninstall() &&
-            $this->unregisterHook('header') &&
-            $this->unregisterHook('backOfficeHeader') &&
-            $this->unregisterHook('paymentReturn');
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $uninstalled = parent::uninstall() &&
+                $this->unregisterHook('header') &&
+                $this->unregisterHook('backOfficeHeader') &&
+                $this->unregisterHook('paymentReturn');
+        }
+        else {
+            $uninstalled = parent::uninstall() &&
+                $this->unregisterHook('displayHeader') &&
+                $this->unregisterHook('displayBackOfficeHeader') &&
+                $this->unregisterHook('paymentReturn');
+        }
 
         if ($uninstalled) {
             $uninstalled &= Configuration::deleteByName('KD_ENABLE_LOGGER') &&
@@ -160,7 +176,8 @@ class Digiteal extends PaymentModule
                 Configuration::deleteByName('KD_ENABLE_ROADMAP') &&
                 Configuration::deleteByName('KD_KPIID') &&
                 Configuration::deleteByName('KD_KPIIDT') &&
-                Configuration::deleteByName('KD_MODE');
+                Configuration::deleteByName('KD_MODE') &&
+                Configuration::deleteByName('KD_SPLIT_PAYMENT_METHODE');
             $uninstalled &= Db::getInstance()->execute(
                 'DELETE FROM `'._DB_PREFIX_."configuration` WHERE `name` LIKE 'KD_%'"
             );
@@ -171,25 +188,6 @@ class Digiteal extends PaymentModule
         }
 
         return (bool) $uninstalled;
-    }
-
-    /**
-     * @return mixed
-     */
-    private function installTab()
-    {
-        $tab = new Tab();
-        $tab->class_name = 'AdminDigitealRoadmap';
-        $tab->module = 'digiteal';
-        $tab->active = 0;
-        $tab->id_parent = (int) Tab::getIdFromClassName('DEFAULT');
-        $languages = Language::getLanguages();
-        $tab->name = [];
-        foreach ($languages as $lang) {
-            $tab->name[$lang['id_lang']] = 'digiteal';
-        }
-
-        return $tab->add();
     }
 
     /**
@@ -230,6 +228,14 @@ class Digiteal extends PaymentModule
     /**
      * @param array $params
      */
+    public function hookDisplayHeader($params)
+    {
+        $this->hookHeader($params);
+    }
+
+    /**
+     * @param array $params
+     */
     public function hookBackOfficeHeader($params)
     {
         $moduleName = Tools::getValue('module_name');
@@ -242,6 +248,11 @@ class Digiteal extends PaymentModule
                 $this->context->controller->addCSS($this->_path.'views/css/back-1.5.css');
             }
         }
+    }
+
+    public function hookDisplayBackOfficeHeader($params)
+    {
+        $this->hookBackOfficeHeader($params);
     }
 
     /**
@@ -261,17 +272,22 @@ class Digiteal extends PaymentModule
             return;
         }
 
-        $digitealPaymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-        $digitealPaymentOption->setModuleName($this->name)
-            ->setCallToActionText($this->l('Pay online'))
-            ->setAction($this->context->link->getModuleLink($this->name, 'redirect', [], true));
-
-        $logo = $this->getPaymentLogo();
-        if (!is_null($logo)) {
-            $digitealPaymentOption->setLogo(Media::getMediaPath($logo));
+        if (Configuration::get('KD_SPLIT_PAYMENT_METHODE')) {
+            return $this->getPaymentOptions();
         }
+        else {
+            $digitealPaymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+            $digitealPaymentOption->setModuleName($this->name)
+                ->setCallToActionText($this->l('Pay online'))
+                ->setAction($this->context->link->getModuleLink($this->name, 'redirect', [], true));
 
-        return [$digitealPaymentOption];
+            $logo = $this->getPaymentLogo();
+            if (!is_null($logo)) {
+                $digitealPaymentOption->setLogo(Media::getMediaPath($logo));
+            }
+
+            return [$digitealPaymentOption];
+        }
     }
 
     /**
@@ -390,24 +406,62 @@ class Digiteal extends PaymentModule
     }
 
     /**
+     * Get the payment options available based on the company's status.
+     *
+     * @return array An array of PaymentOption objects representing the available payment methods
+     */
+    private function getPaymentOptions()
+    {
+        $paymentMethods = $this->companyStatus->getPaymentMethodsAsArray();
+        if (count($paymentMethods) > 0) {
+            $digitealPaymentOptions = [];
+            foreach ($paymentMethods as $paymentMethod) {
+                $digitealPaymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+                $digitealPaymentOption->setModuleName($this->name)
+                    ->setCallToActionText($this->l('Pay by') . ' ' . strtolower(str_replace('_', ' ', $paymentMethod)))
+                    ->setAction($this->context->link->getModuleLink($this->name, 'redirect', ['paymentMethod' => $paymentMethod], true));
+
+                $logo = $this->getPaymentLogo($paymentMethod);
+                if (!is_null($logo)) {
+                    $digitealPaymentOption->setLogo(Media::getMediaPath($logo));
+                }
+                $digitealPaymentOptions[] = $digitealPaymentOption;
+            }
+            return $digitealPaymentOptions;
+        }
+        return [];
+    }
+
+    /**
      * @return null|string payment logo URL
      */
-    protected function getPaymentLogo()
+    protected function getPaymentLogo($paymentMethod = null)
     {
         if (isset($this->companyStatus)) {
             $payment_logos = $this->companyStatus->getPaymentMethodsLogos();
             if (!is_null($payment_logos)) {
-                $file = _PS_MODULE_DIR_.$this->name.'/views/img/logos/'.$payment_logos.'.svg';
-                if (!file_exists($file)) {
-                    $payment_methods = $this->companyStatus->getPaymentMethodsAsArray();
-                    if (count($payment_methods) > 0) {
-                        DigitealPaymentMethod::generateLogosFile($file, $payment_methods);
+                if (is_null($paymentMethod)) {
+                    $file = _PS_MODULE_DIR_.$this->name.'/views/img/logos/'.$payment_logos.'.svg';
+                    if (!file_exists($file)) {
+                        $payment_methods = $this->companyStatus->getPaymentMethodsAsArray();
+                        if (count($payment_methods) > 0) {
+                            DigitealPaymentMethod::generateLogosFile($file, $payment_methods);
+                        }
+                    }
+                    if (version_compare(_PS_VERSION_, '1.6', '<')) {
+                        return Tools::getProtocol().Tools::getMediaServer($file).'/modules/'.$this->name.'/views/img/logos/'.$payment_logos.'.svg';
+                    } else {
+                        return Media::getMediaPath($file);
                     }
                 }
-                if (version_compare(_PS_VERSION_, '1.6', '<')) {
-                    return Tools::getProtocol().Tools::getMediaServer($file).'/modules/'.$this->name.'/views/img/logos/'.$payment_logos.'.svg';
-                } else {
-                    return Media::getMediaPath($file);
+                else {
+                    $filename = DigitealPaymentMethod::getPaymentMethodLogo($paymentMethod);
+                    $file = _PS_MODULE_DIR_.$this->name.'/views/img/logos/'. $filename;
+                    if (version_compare(_PS_VERSION_, '1.6', '<')) {
+                        return Tools::getProtocol().Tools::getMediaServer($file).'/modules/'.$this->name.'/views/img/logos/'.$filename;
+                    } else {
+                        return Media::getMediaPath($file);
+                    }
                 }
             }
         }
@@ -423,17 +477,12 @@ class Digiteal extends PaymentModule
     public function getContent()
     {
         $this->companyStatus = new DigitealCompanyStatus();
-        $digiteal_roadmap = null;
-        if (Configuration::get('KD_ENABLE_ROADMAP')) {
-            $digiteal_roadmap = $this->context->link->getAdminLink('AdminDigitealRoadmap');
-        }
 
         $smartyVars = [
             'digiteal_description' => $this->description,
             'form_action'          => AdminController::$currentIndex.'&configure='.$this->name.'&token='.Tools::getAdminTokenLite('AdminModules'),
             'reinit_module'        => AdminController::$currentIndex.'&configure='.$this->name.'&'.self::REINITIALIZE_MODULE.'&token='.Tools::getAdminTokenLite('AdminModules'),
             'reinit_submit'        => self::REINITIALIZE_MODULE,
-            'digiteal_roadmap'     => $digiteal_roadmap,
         ];
 
         $nextStep = 1;
@@ -490,7 +539,6 @@ class Digiteal extends PaymentModule
         } elseif (Tools::isSubmit(self::SUBMIT_STEP_6)) {
             if ($this->companyStatus->checkRestStatus()) {
                 $smartyVars['messageSuccess'] = $this->l('The information has been updated.');
-
                 if (Tools::getIsset('selectedIban')) {
                     $ibans = $this->companyStatus->getIbansAsArray();
                     $iban = Tools::getValue('selectedIban');
@@ -499,6 +547,8 @@ class Digiteal extends PaymentModule
                         $this->companyStatus->save();
                     }
                 }
+                $splitPaymentMethods = Tools::getValue('splitPaymentMethods', true);
+                Configuration::updateValue('KD_SPLIT_PAYMENT_METHODE', (bool) $splitPaymentMethods);
             }
         }
 
@@ -724,6 +774,25 @@ class Digiteal extends PaymentModule
             'required' => false,
         ];
         $return[] = [
+            'type'     => ((version_compare(_PS_VERSION_, '1.6', '<')) ? 'radio' : 'switch'),
+            'label'    => $this->l('Payment methods shown separately:'),
+            'name'     => 'splitPaymentMethods',
+            'is_bool' => true,
+            'value'   => Configuration::get('KD_SPLIT_PAYMENT_METHODE'),
+            'values'  => [
+                [
+                    'id'    => 'splitPaymentMethods_on',
+                    'value' => 1,
+                    'label' => $this->l('Enable'),
+                ],
+                [
+                    'id'    => 'splitPaymentMethods_off',
+                    'value' => 0,
+                    'label' => $this->l('Disable'),
+                ],
+            ],
+        ];
+        $return[] = [
             'type'     => 'paymentMethod',
             'label'    => $this->l('The payment methods activated on your store are :'),
             'name'     => 'paymentMethods',
@@ -731,7 +800,6 @@ class Digiteal extends PaymentModule
             'required' => false,
             'disabled' => true,
         ];
-
         return $return;
     }
 }

@@ -11,7 +11,7 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.2
+ * @version   1.0.3
  */
 if (!defined('_PS_VERSION_')) {
     exit();
@@ -114,6 +114,11 @@ if (!class_exists('DigitealPaymentMethod', false)) {
             $svgFile .= '</svg>';
 
             @file_put_contents($file, $svgFile);
+        }
+
+        public static function getPaymentMethodLogo($paymentMethod)
+        {
+            return self::$logos[strtolower($paymentMethod)]['f'];
         }
     }
 }

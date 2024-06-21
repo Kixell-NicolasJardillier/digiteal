@@ -10,7 +10,7 @@
 * @copyright Copyright © 2021 - SARL Kixell
 * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
 * @package   digiteal
-* @version   1.0.2
+* @version   1.0.3
 *}
 
 <p class="payment_module"><a href="{$action}" title="{$cta_text}">{$cta_text} {if isset($logo)}<img src="{$logo}" alt="{$cta_text}"/>{/if}</a></p>

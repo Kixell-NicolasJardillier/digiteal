@@ -14,7 +14,7 @@
 
 | PrestaShop version | Module version |  Repo               |  PHP Version |
 |--------------------|----------------|---------------------|--------------|
-| 1.5.x to 1.7.x      | 1.x            |  [main]           |   5.6 or greater    |
+| 1.5.x to 8.x       | 1.x            |  [main]           |   5.6 or greater    |
 
 
 ### Module available in the following languages :
