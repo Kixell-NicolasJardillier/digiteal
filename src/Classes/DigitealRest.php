@@ -14,7 +14,7 @@
  * @version   1.0.3
  */
 if (!defined('_PS_VERSION_')) {
-    exit();
+    exit;
 }
 
 if (!class_exists('DigitealRest', false)) {
@@ -55,8 +55,8 @@ if (!class_exists('DigitealRest', false)) {
         }
 
         /**
-         * @param $target
-         * @param $data
+         * @param      $target
+         * @param      $data
          * @param null $auth
          *
          * @return array|false|mixed|null
@@ -100,7 +100,7 @@ if (!class_exists('DigitealRest', false)) {
         }
 
         /**
-         * @param $target
+         * @param      $target
          * @param null $data
          * @param null $auth
          *

@@ -14,15 +14,15 @@
  * @version   1.0.3
  */
 if (!defined('_PS_VERSION_')) {
-    exit();
+    exit;
 }
 
 if (!class_exists('DigitealTools', false)) {
     class DigitealTools
     {
         /**
-         * @param $key
-         * @param $array
+         * @param      $key
+         * @param      $array
          * @param null $default
          *
          * @return int|mixed|null
@@ -176,7 +176,7 @@ if (!class_exists('DigitealTools', false)) {
         }
 
         /**
-         * @param $controller
+         * @param       $controller
          * @param array $query
          *
          * @return string
@@ -192,7 +192,7 @@ if (!class_exists('DigitealTools', false)) {
         }
 
         /**
-         * @param $url
+         * @param       $url
          * @param false $ajax
          */
         public static function digitealRedirect($url, $ajax = false)

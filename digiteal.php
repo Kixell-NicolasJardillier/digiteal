@@ -98,14 +98,12 @@ class Digiteal extends PaymentModule
                 $this->registerHook('header') &&
                 $this->registerHook('backOfficeHeader') &&
                 $this->registerHook('paymentReturn');
-        }
-        else {
+        } else {
             $installed = parent::install() &&
                 $this->registerHook('displayHeader') &&
                 $this->registerHook('displayBackOfficeHeader') &&
                 $this->registerHook('paymentReturn');
         }
-
 
         if ($installed) {
             $installed = Configuration::updateValue('KD_ENABLE_LOGGER', 0) &&
@@ -113,12 +111,12 @@ class Digiteal extends PaymentModule
                 Configuration::updateValue('KD_SPLIT_PAYMENT_METHODE', true);
         }
         if ($installed) {
-            ((false !== ($dc = DigitealRest::getConf())) ?
-                $installed = Configuration::updateValue('KD_KPIID', $dc) : $installed = false);
+            (false !== ($dc = DigitealRest::getConf())) ?
+                $installed = Configuration::updateValue('KD_KPIID', $dc) : $installed = false;
         }
         if ($installed) {
-            ((false !== ($dc = DigitealRest::getConf(true))) ?
-                $installed = Configuration::updateValue('KD_KPIIDT', $dc) : $installed = false);
+            (false !== ($dc = DigitealRest::getConf(true))) ?
+                $installed = Configuration::updateValue('KD_KPIIDT', $dc) : $installed = false;
         }
 
         if ($installed) {
@@ -162,8 +160,7 @@ class Digiteal extends PaymentModule
                 $this->unregisterHook('header') &&
                 $this->unregisterHook('backOfficeHeader') &&
                 $this->unregisterHook('paymentReturn');
-        }
-        else {
+        } else {
             $uninstalled = parent::uninstall() &&
                 $this->unregisterHook('displayHeader') &&
                 $this->unregisterHook('displayBackOfficeHeader') &&
@@ -274,8 +271,7 @@ class Digiteal extends PaymentModule
 
         if (Configuration::get('KD_SPLIT_PAYMENT_METHODE')) {
             return $this->getPaymentOptions();
-        }
-        else {
+        } else {
             $digitealPaymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
             $digitealPaymentOption->setModuleName($this->name)
                 ->setCallToActionText($this->l('Pay online'))
@@ -418,7 +414,7 @@ class Digiteal extends PaymentModule
             foreach ($paymentMethods as $paymentMethod) {
                 $digitealPaymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $digitealPaymentOption->setModuleName($this->name)
-                    ->setCallToActionText($this->l('Pay by') . ' ' . strtolower(str_replace('_', ' ', $paymentMethod)))
+                    ->setCallToActionText($this->l('Pay by').' '.strtolower(str_replace('_', ' ', $paymentMethod)))
                     ->setAction($this->context->link->getModuleLink($this->name, 'redirect', ['paymentMethod' => $paymentMethod], true));
 
                 $logo = $this->getPaymentLogo($paymentMethod);
@@ -427,8 +423,10 @@ class Digiteal extends PaymentModule
                 }
                 $digitealPaymentOptions[] = $digitealPaymentOption;
             }
+
             return $digitealPaymentOptions;
         }
+
         return [];
     }
 
@@ -453,10 +451,9 @@ class Digiteal extends PaymentModule
                     } else {
                         return Media::getMediaPath($file);
                     }
-                }
-                else {
+                } else {
                     $filename = DigitealPaymentMethod::getPaymentMethodLogo($paymentMethod);
-                    $file = _PS_MODULE_DIR_.$this->name.'/views/img/logos/'. $filename;
+                    $file = _PS_MODULE_DIR_.$this->name.'/views/img/logos/'.$filename;
                     if (version_compare(_PS_VERSION_, '1.6', '<')) {
                         return Tools::getProtocol().Tools::getMediaServer($file).'/modules/'.$this->name.'/views/img/logos/'.$filename;
                     } else {
@@ -777,9 +774,9 @@ class Digiteal extends PaymentModule
             'type'     => ((version_compare(_PS_VERSION_, '1.6', '<')) ? 'radio' : 'switch'),
             'label'    => $this->l('Payment methods shown separately:'),
             'name'     => 'splitPaymentMethods',
-            'is_bool' => true,
-            'value'   => Configuration::get('KD_SPLIT_PAYMENT_METHODE'),
-            'values'  => [
+            'is_bool'  => true,
+            'value'    => Configuration::get('KD_SPLIT_PAYMENT_METHODE'),
+            'values'   => [
                 [
                     'id'    => 'splitPaymentMethods_on',
                     'value' => 1,
@@ -800,6 +797,7 @@ class Digiteal extends PaymentModule
             'required' => false,
             'disabled' => true,
         ];
+
         return $return;
     }
 }
