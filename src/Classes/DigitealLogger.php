@@ -28,7 +28,7 @@ if (!class_exists('DigitealLogger', false)) {
         /**
          * @var bool
          */
-        private static $_enable = true;
+        private static $_enable = false;
 
         /**
          * @return FileLogger
