@@ -14,7 +14,7 @@
  * @version   1.0.3
  */
 if (!defined('_PS_VERSION_')) {
-    exit();
+    exit;
 }
 
 if (!class_exists('DigitealLogger', false)) {
@@ -56,7 +56,7 @@ if (!class_exists('DigitealLogger', false)) {
         }
 
         /**
-         * @param $message
+         * @param     $message
          * @param int $level
          */
         public static function log($message, $level = FileLogger::DEBUG)
