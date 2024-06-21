@@ -80,7 +80,7 @@ class DigitealRedirectModuleFrontController extends ModuleFrontController
     /**
      * Redirect to corresponding url or follow redirections and then redirect.
      *
-     * @param $url
+     * @param      $url
      * @param bool $followLocation
      *
      * @return false

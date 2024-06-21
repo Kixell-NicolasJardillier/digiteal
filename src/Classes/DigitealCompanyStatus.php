@@ -14,7 +14,7 @@
  * @version   1.0.3
  */
 if (!defined('_PS_VERSION_')) {
-    exit();
+    exit;
 }
 
 if (!class_exists('DigitealCompanyStatus', false)) {
@@ -692,6 +692,7 @@ if (!class_exists('DigitealCompanyStatus', false)) {
                     }
                 }
             }
+
             return false;
         }
     }

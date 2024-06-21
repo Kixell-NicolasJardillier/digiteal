@@ -20,14 +20,14 @@ try {
     $payment_data = file_get_contents('php://input');
 } catch (Exception $e) {
     DigitealLogger::logError($e->getMessage());
-    exit();
+    exit;
 }
 
 try {
     $payment_array = json_decode($payment_data, true);
 } catch (Exception $e) {
     DigitealLogger::logError($e->getMessage());
-    exit();
+    exit;
 }
 
 if (DigitealTools::checkWebhookPaymentInitiated($payment_array)) {
@@ -134,4 +134,4 @@ if (DigitealTools::checkWebhookPaymentInitiated($payment_array)) {
     exit('<p style="display: none">Check data from payment initiated failed</p>');
 }
 
-exit();
+exit;

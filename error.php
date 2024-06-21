@@ -17,19 +17,20 @@ require_once dirname(dirname(dirname(__FILE__))).'/config/config.inc.php';
 require_once dirname(__FILE__).'/digiteal.php';
 
 DigitealLogger::logError('[Payment initiation error]');
+
 // Retrieve body content
 try {
     $payment_data = file_get_contents('php://input');
 } catch (Exception $e) {
     DigitealLogger::logError($e->getMessage());
-    exit();
+    exit;
 }
 
 try {
     $payment_array = json_decode($payment_data, true);
 } catch (Exception $e) {
     DigitealLogger::logError($e->getMessage());
-    exit();
+    exit;
 }
 
 if (DigitealTools::checkWebhookPaymentInitiationError($payment_array)) {
@@ -58,4 +59,4 @@ if (DigitealTools::checkWebhookPaymentInitiationError($payment_array)) {
     exit('<p style="display: none">Check data from payment  initiation error failed</p>');
 }
 
-exit();
+exit;
