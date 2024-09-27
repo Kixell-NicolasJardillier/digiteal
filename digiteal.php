@@ -49,7 +49,7 @@ class Digiteal extends PaymentModule
     public function __construct()
     {
         $this->name = 'digiteal';
-        $this->version = '1.0.3';
+        $this->version = '1.0.4';
         $this->tab = 'payments_gateways';
         $this->author = 'Kixell';
         $this->controllers = ['redirect', 'confirmation', 'error'];
@@ -133,10 +133,6 @@ class Digiteal extends PaymentModule
                     $installed = false;
                 }
             }
-        }
-
-        if ($installed) {
-            $installed = $this->installTab();
         }
 
         if (false === $installed) {
