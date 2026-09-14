@@ -73,3 +73,4 @@ $_MODULE['<{digiteal}prestashop>payment_return_0db71da7150c27142eef9d22b843b4a9'
 $_MODULE['<{digiteal}prestashop>payment_return_64430ad2835be8ad60c59e7d44e4b0b1'] = 'supporto clienti';
 $_MODULE['<{digiteal}prestashop>payment_return_d15feee53d81ea16269e54d4784fa123'] = 'Abbiamo notato un problema con il tuo ordine. Se pensi che si tratti di un errore, non esitare a contattare il nostro';
 $_MODULE['<{digiteal}prestashop>payment_return_66fcf4c223bbf4c7c886d4784e1f62e4'] = 'esperto team di assistenza clienti';
+$_MODULE['<{digiteal}prestashop>digiteal_7cbb88dba0a8063c6d7b9da10853a525'] = 'I tuoi URL di notifica di pagamento usano ancora il vecchio formato e non funzioneranno più su PrestaShop 9. Esegui di nuovo «Finalizzare la configurazione» per registrare i nuovi URL presso Digiteal.';
