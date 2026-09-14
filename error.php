@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE.
  *
@@ -11,52 +12,21 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.3
+ * @version   1.0.5
+ */
+
+/*
+ * LEGACY ENTRY POINT — PAYMENT_INITIATION_ERROR webhook.
+ *
+ * Kept for the shops that registered this URL with Digiteal before module version 1.0.5, on
+ * Prestashop 1.5 to 8. Since 1.0.5 the webhook is served by the front controller
+ * digiteal/notifyerror, which is the only route that works on Prestashop 9.
+ *
+ * Do not add logic here : everything lives in DigitealWebhook so that both routes behave the same.
  */
 require_once dirname(dirname(dirname(__FILE__))).'/config/config.inc.php';
 require_once dirname(__FILE__).'/digiteal.php';
 
-DigitealLogger::logError('[Payment initiation error]');
+$outcome = DigitealWebhook::handlePaymentInitiationError();
 
-// Retrieve body content
-try {
-    $payment_data = file_get_contents('php://input');
-} catch (Exception $e) {
-    DigitealLogger::logError($e->getMessage());
-    exit;
-}
-
-try {
-    $payment_array = json_decode($payment_data, true);
-} catch (Exception $e) {
-    DigitealLogger::logError($e->getMessage());
-    exit;
-}
-
-if (DigitealTools::checkWebhookPaymentInitiationError($payment_array)) {
-    $remittanceInfo = $payment_array['paymentRequestInformation']['remittanceInfo'];
-    $remittanceInfo = explode('-', $remittanceInfo);
-    if (count($remittanceInfo) === 2 && $remittanceInfo[0] === 'cart') {
-        $cart_id = (int) $remittanceInfo[1];
-        $cart = new Cart($cart_id);
-        if (Validate::isLoadedObject($cart)) {
-            try {
-                DigitealTools::buildPrestashopContext($cart);
-            } catch (Exception $e) {
-                DigitealLogger::logError($e->getMessage());
-                exit('<p style="display: none">Exception to build Prestashop context: '.$e->getMessage().'</p>');
-            }
-        } else {
-            DigitealLogger::logError('Cart not loaded properly : '.var_export($payment_data, true));
-            exit('<p style="display: none">Cart not loaded properly</p>');
-        }
-    } else {
-        DigitealLogger::logError('Cannot retrieve cart id from remittance info : '.var_export($payment_data, true));
-        exit('<p style="display: none">Cannot retrieve cart id from remittance info</p>');
-    }
-} else {
-    DigitealLogger::logError('Check data from payment initiation error failed : '.var_export($payment_data, true));
-    exit('<p style="display: none">Check data from payment  initiation error failed</p>');
-}
-
-exit;
+exit('<p style="display: none">'.$outcome.'</p>');

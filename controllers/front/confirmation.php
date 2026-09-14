@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE.
  *
@@ -57,7 +58,7 @@ class DigitealConfirmationModuleFrontController extends ModuleFrontController
             $cart = new Cart((int) $cart_id);
             DigitealLogger::logInfo('[confirmation] $cart_id = '.$cart_id);
             if (Validate::isLoadedObject($cart)) {
-                $order_id = Order::getOrderByCartId($cart_id);
+                $order_id = DigitealTools::getOrderIdByCartId($cart_id);
                 $order = new Order((int) $order_id);
                 DigitealLogger::logInfo('[confirmation] $order_id = '.$order_id);
                 if (Validate::isLoadedObject($order)) {

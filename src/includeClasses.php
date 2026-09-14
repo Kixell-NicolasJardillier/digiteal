@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE.
  *
@@ -19,3 +20,4 @@ require_once __DIR__.'/Classes/DigitealTools.php';
 require_once __DIR__.'/Classes/DigitealConfiguration.php';
 require_once __DIR__.'/Classes/DigitealLogger.php';
 require_once __DIR__.'/Classes/DigitealCompanyStatus.php';
+require_once __DIR__.'/Classes/DigitealWebhook.php';

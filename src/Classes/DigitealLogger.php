@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE.
  *
@@ -26,9 +27,12 @@ if (!class_exists('DigitealLogger', false)) {
         private static $_logger = null;
 
         /**
-         * @var bool
+         * Null until KD_ENABLE_LOGGER has been read once. Initializing it to false instead would
+         * make the is_null() guard below unreachable and silently disable logging for good.
+         *
+         * @var bool|null
          */
-        private static $_enable = false;
+        private static $_enable = null;
 
         /**
          * @return FileLogger

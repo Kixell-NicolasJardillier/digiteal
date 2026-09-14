@@ -73,3 +73,4 @@ $_MODULE['<{digiteal}prestashop>payment_return_0db71da7150c27142eef9d22b843b4a9'
 $_MODULE['<{digiteal}prestashop>payment_return_64430ad2835be8ad60c59e7d44e4b0b1'] = 'klantenservice';
 $_MODULE['<{digiteal}prestashop>payment_return_d15feee53d81ea16269e54d4784fa123'] = 'We hebben een probleem opgemerkt met uw bestelling. Als u denkt dat dit een fout is, neem dan gerust contact op met onze';
 $_MODULE['<{digiteal}prestashop>payment_return_66fcf4c223bbf4c7c886d4784e1f62e4'] = 'deskundige klantenserviceteam';
+$_MODULE['<{digiteal}prestashop>digiteal_7cbb88dba0a8063c6d7b9da10853a525'] = 'Uw URL\'s voor betalingsmeldingen gebruiken nog de oude indeling en werken niet meer op PrestaShop 9. Voer «Afronden van de configuratie» opnieuw uit om de nieuwe URL\'s bij Digiteal te registreren.';
