@@ -125,8 +125,12 @@ class DigitealRedirectModuleFrontController extends ModuleFrontController
             if ($i === 0) {
                 $headers['http_code'] = $line;
             } else {
-                list($key, $value) = explode(': ', $line);
-                $headers[$key] = $value;
+                // A header line without ': ' (or a trailing empty line) would raise an undefined
+                // index notice on PHP 8, so only keep the lines that can actually be split.
+                $parts = explode(': ', $line, 2);
+                if (count($parts) === 2) {
+                    $headers[$parts[0]] = $parts[1];
+                }
             }
         }
 

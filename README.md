@@ -12,9 +12,29 @@
 
 #### [Download module](https://github.com/Kixell-NicolasJardillier/digiteal/raw/main/digiteal.zip)
 
-| PrestaShop version | Module version |  Repo               |  PHP Version |
-|--------------------|----------------|---------------------|--------------|
-| 1.5.x to 8.x       | 1.x            |  [main]           |   5.6 or greater    |
+| PrestaShop version | Module version | PHP version (tested)     |
+|--------------------|----------------|--------------------------|
+| 9.0.x to 9.1.x     | 1.0.5 or later | 8.1 to 8.5               |
+| 8.0.x to 8.2.x     | 1.0.x          | 8.1 to 8.4               |
+| 1.6.x to 1.7.x     | 1.0.x          | follow your PrestaShop   |
+
+### <span style="color:#0db5c0">Requirements</span>
+
+* **PrestaShop** 1.6 to 9.1. Module versions before 1.0.5 cannot be installed on PrestaShop 9.
+* **PHP** as required by your PrestaShop version. The module itself is verified from PHP 8.1 to 8.5
+  and declares no type hints, so it raises no PHP 8.4 deprecation.
+* **MariaDB 10.2+ / MySQL 5.7+** — the module creates no table and adds no requirement of its own
+  beyond PrestaShop's.
+* **cURL** PHP extension — mandatory, the module refuses to install without it.
+* **HTTPS** on the shop, and the shop must be reachable from the internet so that Digiteal can call
+  the payment notification URLs.
+
+> **Upgrading to PrestaShop 9 with the module already configured?**
+> PrestaShop 9 forbids direct access to `.php` files inside `modules/`, so the notification URLs used
+> before module version 1.0.5 (`modules/digiteal/validation.php` and `modules/digiteal/error.php`)
+> answer 403 and no order would be created. After upgrading the module, open its configuration page
+> and run **Finalize the configuration** again to register the new URLs with Digiteal. The
+> configuration page warns you as long as the old URLs are still in use.
 
 
 ### Module available in the following languages :
@@ -32,7 +52,7 @@
 | Multiple payment methods available (Visa*, MC*, Carte Bleue*, Bancontact, Ideal, etc.).<br /><br />* following approval of the compliance team | Smooth user experience thanks to the interface that seamlessly adapts to different screen sizes | Better satisfaction |
 | No payment fees deducted during payout | Easier for the accounting department | Better treasury |
 | Attractive pricing (transaction fees) | Better margin  | More benefits |
-| Module compatible with Prestashop 1.5 to 1.7 | Continuity in case of update  | Flexibility |
+| Module compatible with Prestashop 1.6 to 9 | Continuity in case of update  | Flexibility |
 | EEA coverage (European Economic Area ; from any IBAN = €) | Accept payments from international customers  | More potential turnover |
 | Easy plug & play module| Quick and easy  integration | Reactivity |
 | Sandbox to test the different scenarios | Making it easy for the test team | Saving time |
