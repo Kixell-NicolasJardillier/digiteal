@@ -33,7 +33,6 @@ class DigitealNotifyModuleFrontController extends ModuleFrontController
 
     public function __construct()
     {
-        // No theme, no header, no footer : this endpoint is called by Digiteal, not by a browser.
         $this->ajax = true;
         $this->content_only = true;
         parent::__construct();
@@ -61,13 +60,10 @@ class DigitealNotifyModuleFrontController extends ModuleFrontController
     {
         DigitealLogger::logInfo('[notify] postProcess called');
 
-        // false : the front dispatcher already initialized a controller for this request.
         $outcome = DigitealWebhook::handlePaymentInitiated(false);
 
         DigitealLogger::logInfo('[notify] '.$outcome);
 
-        // Digiteal only looks at the HTTP status, which stays 200 in every case so that a payload
-        // we cannot process is not retried forever.
         header('Content-Type: text/plain; charset=utf-8');
         exit($outcome);
     }

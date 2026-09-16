@@ -32,6 +32,21 @@ class DigitealConfirmationModuleFrontController extends ModuleFrontController
         parent::__construct();
     }
 
+    public function setMedia()
+    {
+        parent::setMedia();
+
+        if (method_exists($this, 'registerStylesheet')) {
+            $this->registerStylesheet(
+                'digiteal-front',
+                'modules/digiteal/views/css/front.css',
+                ['media' => 'all', 'priority' => 200]
+            );
+        } else {
+            $this->addCSS(_MODULE_DIR_.'digiteal/views/css/front.css');
+        }
+    }
+
     public function initHeader()
     {
         parent::initHeader();
@@ -93,6 +108,7 @@ class DigitealConfirmationModuleFrontController extends ModuleFrontController
                             'digiteal_elapsed_time_url'     => base64_encode($ajax_call),
                             'digiteal_default_url_redirect' => base64_encode($digiteal_default_url_redirect),
                             'digiteal_elapsed_time'         => $digiteal_elapsed_time,
+                            'digiteal_fallback_url'         => $digiteal_default_url_redirect,
                         ];
                         $this->context->smarty->assign($smarty_vars);
                         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
@@ -105,12 +121,12 @@ class DigitealConfirmationModuleFrontController extends ModuleFrontController
             } else {
                 DigitealLogger::logError('[confirmation] Cart not loaded properly, cart id : '.$cart_id);
                 $page = DigitealTools::digitealPageLink('history');
-                DigitealTools::digitealRedirect($page);
+                DigitealTools::digitealRedirect($page, $this->ajax);
             }
         } else {
             DigitealLogger::logError('[confirmation] cart_id does not exist');
             $page = DigitealTools::digitealPageLink('history');
-            DigitealTools::digitealRedirect($page);
+            DigitealTools::digitealRedirect($page, $this->ajax);
         }
     }
 }

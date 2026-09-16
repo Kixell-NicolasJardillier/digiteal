@@ -31,7 +31,6 @@ class DigitealNotifyErrorModuleFrontController extends ModuleFrontController
 
     public function __construct()
     {
-        // No theme, no header, no footer : this endpoint is called by Digiteal, not by a browser.
         $this->ajax = true;
         $this->content_only = true;
         parent::__construct();
@@ -53,7 +52,6 @@ class DigitealNotifyErrorModuleFrontController extends ModuleFrontController
     {
         DigitealLogger::logInfo('[notifyerror] postProcess called');
 
-        // false : the front dispatcher already initialized a controller for this request.
         $outcome = DigitealWebhook::handlePaymentInitiationError(false);
 
         DigitealLogger::logInfo('[notifyerror] '.$outcome);

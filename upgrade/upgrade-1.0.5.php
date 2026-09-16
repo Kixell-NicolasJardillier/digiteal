@@ -23,23 +23,17 @@ if (!defined('_PS_VERSION_')) {
  * modules/digiteal/validation.php and modules/digiteal/error.php entry points forbidden by
  * Prestashop 9.
  *
- * The webhooks registered with Digiteal cannot be updated from here : the Digiteal password is
- * required and is never stored. The merchant has to run step 5 ("Finalize the configuration")
- * again; the module configuration page displays a warning as long as the old URLs are in use.
- *
  * @param Digiteal $module
  *
  * @return bool
  */
 function upgrade_module_1_0_5($module)
 {
-    // Make sure the newly added front controllers are picked up right away.
     foreach (['clearSf2Cache', 'clearSmartyCache', 'clearXMLCache'] as $method) {
         if (method_exists('Tools', $method)) {
             try {
                 Tools::$method();
             } catch (Exception $e) {
-                // A cache that cannot be cleared must not abort the upgrade.
             }
         }
     }
@@ -49,6 +43,10 @@ function upgrade_module_1_0_5($module)
         if (file_exists($classIndex) && is_writable($classIndex)) {
             @unlink($classIndex);
         }
+    }
+
+    if (method_exists($module, 'syncWebhookUrls')) {
+        $module->syncWebhookUrls();
     }
 
     return true;
