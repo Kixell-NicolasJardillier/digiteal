@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE.
  *
@@ -11,7 +12,7 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.3
+ * @version   1.0.5
  */
 require_once _PS_MODULE_DIR_.'/digiteal/src/Classes/DigitealLogger.php';
 require_once _PS_MODULE_DIR_.'/digiteal/src/Classes/DigitealTools.php';
@@ -29,6 +30,21 @@ class DigitealConfirmationModuleFrontController extends ModuleFrontController
         $this->display_column_left = false;
         $this->display_column_right = version_compare(_PS_VERSION_, '1.6', '<');
         parent::__construct();
+    }
+
+    public function setMedia()
+    {
+        parent::setMedia();
+
+        if (method_exists($this, 'registerStylesheet')) {
+            $this->registerStylesheet(
+                'digiteal-front',
+                'modules/digiteal/views/css/front.css',
+                ['media' => 'all', 'priority' => 200]
+            );
+        } else {
+            $this->addCSS(_MODULE_DIR_.'digiteal/views/css/front.css');
+        }
     }
 
     public function initHeader()
@@ -57,7 +73,7 @@ class DigitealConfirmationModuleFrontController extends ModuleFrontController
             $cart = new Cart((int) $cart_id);
             DigitealLogger::logInfo('[confirmation] $cart_id = '.$cart_id);
             if (Validate::isLoadedObject($cart)) {
-                $order_id = Order::getOrderByCartId($cart_id);
+                $order_id = DigitealTools::getOrderIdByCartId($cart_id);
                 $order = new Order((int) $order_id);
                 DigitealLogger::logInfo('[confirmation] $order_id = '.$order_id);
                 if (Validate::isLoadedObject($order)) {
@@ -92,6 +108,7 @@ class DigitealConfirmationModuleFrontController extends ModuleFrontController
                             'digiteal_elapsed_time_url'     => base64_encode($ajax_call),
                             'digiteal_default_url_redirect' => base64_encode($digiteal_default_url_redirect),
                             'digiteal_elapsed_time'         => $digiteal_elapsed_time,
+                            'digiteal_fallback_url'         => $digiteal_default_url_redirect,
                         ];
                         $this->context->smarty->assign($smarty_vars);
                         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
@@ -104,12 +121,12 @@ class DigitealConfirmationModuleFrontController extends ModuleFrontController
             } else {
                 DigitealLogger::logError('[confirmation] Cart not loaded properly, cart id : '.$cart_id);
                 $page = DigitealTools::digitealPageLink('history');
-                DigitealTools::digitealRedirect($page);
+                DigitealTools::digitealRedirect($page, $this->ajax);
             }
         } else {
             DigitealLogger::logError('[confirmation] cart_id does not exist');
             $page = DigitealTools::digitealPageLink('history');
-            DigitealTools::digitealRedirect($page);
+            DigitealTools::digitealRedirect($page, $this->ajax);
         }
     }
 }

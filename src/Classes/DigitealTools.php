@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE.
  *
@@ -11,7 +12,7 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.3
+ * @version   1.0.5
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -124,22 +125,50 @@ if (!class_exists('DigitealTools', false)) {
         }
 
         /**
+         * Retrieve the id of the order placed for a cart, whatever the Prestashop version.
+         *
+         * Order::getOrderByCartId() is the only one available on 1.5/1.6 and was removed in
+         * Prestashop 9.0; Order::getIdByCartId() only exists as from 1.7. Both return the order
+         * id, or false when the cart has no order yet.
+         *
+         * @param int $cartId
+         *
+         * @return int|false
+         */
+        public static function getOrderIdByCartId($cartId)
+        {
+            if (method_exists('Order', 'getIdByCartId')) {
+                return Order::getIdByCartId((int) $cartId);
+            }
+
+            return Order::getOrderByCartId((int) $cartId);
+        }
+
+        /**
          * Due to problems in some version of Prestashop, let's try to rebuild the context depending on the cart object.
          *
          * @param CartCore $cart
+         * @param bool     $initController Instantiate and initialize a FrontController. Required when
+         *                                 called from a standalone script (the legacy webhook entry
+         *                                 points), but must be false when already running inside a
+         *                                 front controller : the dispatcher has already initialized
+         *                                 one, and initializing a second one would replay the SSL,
+         *                                 maintenance and geolocation checks.
          *
          * @throws PrestaShopDatabaseException
          * @throws PrestaShopException
          */
-        public static function buildPrestashopContext($cart)
+        public static function buildPrestashopContext($cart, $initController = true)
         {
             if (isset($cart->id_shop)) {
                 $_GET['id_shop'] = $cart->id_shop;
                 Context::getContext()->shop = Shop::initialize();
             }
-            $controller = new FrontController();
-            $controller->init();
-            Context::getContext()->controller = $controller;
+            if ($initController) {
+                $controller = new FrontController();
+                $controller->init();
+                Context::getContext()->controller = $controller;
+            }
             Context::getContext()->customer = new Customer((int) $cart->id_customer);
             Context::getContext()->customer->logged = 1;
             Context::getContext()->cart = $cart = new Cart((int) $cart->id);

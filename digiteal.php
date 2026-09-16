@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE.
  *
@@ -11,7 +12,7 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.3
+ * @version   1.0.5
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -25,7 +26,13 @@ require_once _PS_MODULE_DIR_.'/digiteal/src/includeClasses.php';
 class Digiteal extends PaymentModule
 {
     const MODULE_MIN_VERSION = '1.5.0';
-    const MODULE_MAX_VERSION = '9.0.0';
+
+    /**
+     * Upper bound of ps_versions_compliancy. Prestashop pads a 3 part version with '.999' and
+     * then refuses the install when _PS_VERSION_ is strictly greater, so '9.0.0' used to reject
+     * every 9.0.1+ and 9.1.x shop. Keep a wide bound and rely on the runtime checks instead.
+     */
+    const MODULE_MAX_VERSION = '9.99.99';
 
     const REINITIALIZE_MODULE = 'fds0frk34kv';
     const SUBMIT_STEP_1 = 'g1fds56g4s3dh1';
@@ -49,11 +56,13 @@ class Digiteal extends PaymentModule
     public function __construct()
     {
         $this->name = 'digiteal';
-        $this->version = '1.0.4';
+        $this->version = '1.0.5';
         $this->tab = 'payments_gateways';
         $this->author = 'Kixell';
-        $this->controllers = ['redirect', 'confirmation', 'error'];
-        $this->is_eu_compatible = 1;
+        $this->controllers = ['redirect', 'confirmation', 'validation', 'error', 'notify', 'notifyerror'];
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $this->is_eu_compatible = 1;
+        }
         $this->bootstrap = true;
         $this->need_instance = true;
         //$this->module_key = '';
@@ -297,7 +306,7 @@ class Digiteal extends PaymentModule
             $state = $order->getCurrentState();
             if (in_array($state, [Configuration::get('PS_OS_PAYMENT'), Configuration::get('PS_OS_OUTOFSTOCK'), Configuration::get('PS_OS_OUTOFSTOCK_UNPAID')])) {
                 $smartVars = [
-                    'total_to_pay' => Tools::displayPrice($params['total_to_pay'], $params['currencyObj'], false),
+                    'total_to_pay' => $this->formatPrice($params['total_to_pay'], $params['currencyObj']),
                     'status'       => 'ok',
                     'id_order'     => $order->id,
                 ];
@@ -311,6 +320,29 @@ class Digiteal extends PaymentModule
 
             return $this->display(__FILE__, 'payment_return.tpl');
         }
+    }
+
+    /**
+     * Format a price for display, whatever the Prestashop version.
+     *
+     * Tools::displayPrice() was removed in Prestashop 9.0.0; the Locale API that replaces it
+     * only exists as from 1.7.6, hence the runtime check rather than a version_compare().
+     *
+     * @param float               $price
+     * @param Currency|string|int $currency
+     *
+     * @return string
+     */
+    private function formatPrice($price, $currency)
+    {
+        if (method_exists('Tools', 'displayPrice')) {
+            return Tools::displayPrice($price, $currency, false);
+        }
+
+        return $this->context->getCurrentLocale()->formatPrice(
+            (float) $price,
+            is_object($currency) ? $currency->iso_code : (string) $currency
+        );
     }
 
     /**
@@ -463,6 +495,95 @@ class Digiteal extends PaymentModule
     }
 
     /**
+     * URL the configuration wizard has to post to.
+     *
+     * Up to Prestashop 8 the module manager went through PrestaShop\PrestaShop\Adapter\LegacyContext,
+     * which instantiated a legacy AdminController and therefore filled AdminController::$currentIndex.
+     * Prestashop 9 renders the configure page from a pure Symfony controller and never sets that
+     * static, so the historical value would build the broken action "&configure=digiteal&token=...".
+     *
+     * On Prestashop 9 the route admin_module_configure_action accepts both GET and POST, so posting
+     * back to the current URL simply re-enters it and getContent() receives the submitted data. That
+     * URL must be kept as is because it carries the _token query parameter that
+     * TokenizedUrlsListener requires on every back office request.
+     *
+     * @param array $params Extra query parameters to append
+     *
+     * @return string
+     */
+    private function getConfigurationUrl($params = [])
+    {
+        if (!empty(AdminController::$currentIndex)) {
+            $url = AdminController::$currentIndex.'&configure='.$this->name
+                .'&token='.Tools::getAdminTokenLite('AdminModules');
+        } else {
+            $requestUri = isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '';
+            $url = preg_replace('/[^A-Za-z0-9_\-.~:\/?#\[\]@!$&\'()*+,;=%]/', '', $requestUri);
+        }
+
+        foreach ($params as $key => $value) {
+            $url .= (strpos($url, '?') === false ? '?' : '&').rawurlencode($key);
+            if (null !== $value) {
+                $url .= '='.rawurlencode($value);
+            }
+        }
+
+        return $url;
+    }
+
+    /**
+     * URL Digiteal has to call for a PAYMENT_INITIATED notification.
+     *
+     * Served by a front controller rather than by modules/digiteal/validation.php : as from
+     * Prestashop 9.0.0 the core ships a modules/.htaccess that denies direct access to .php files,
+     * which turns the legacy URL into a 403 and prevents any order from being created.
+     *
+     * @return string
+     */
+    public function getWebhookValidationLink()
+    {
+        return $this->context->link->getModuleLink($this->name, 'notify', [], true);
+    }
+
+    /**
+     * URL Digiteal has to call for a PAYMENT_INITIATION_ERROR notification.
+     *
+     * @return string
+     */
+    public function getWebhookErrorLink()
+    {
+        return $this->context->link->getModuleLink($this->name, 'notifyerror', [], true);
+    }
+
+    /**
+     * Keep the stored notification URLs aligned with what this PrestaShop version serves.
+     *
+     * @return void
+     */
+    public function syncWebhookUrls()
+    {
+        if (!$this->companyStatus instanceof DigitealCompanyStatus) {
+            $this->companyStatus = new DigitealCompanyStatus();
+        }
+
+        if (!$this->companyStatus->getModuleReady()) {
+            return;
+        }
+
+        $validation = $this->getWebhookValidationLink();
+        $error = $this->getWebhookErrorLink();
+
+        if ($this->companyStatus->getWebhookValidationUrl() === $validation
+            && $this->companyStatus->getWebhookErrorUrl() === $error) {
+            return;
+        }
+
+        $this->companyStatus->setWebhookValidationUrl($validation);
+        $this->companyStatus->setWebhookErrorUrl($error);
+        $this->companyStatus->save();
+    }
+
+    /**
      * @throws PrestaShopException
      *
      * @return false|string
@@ -470,11 +591,12 @@ class Digiteal extends PaymentModule
     public function getContent()
     {
         $this->companyStatus = new DigitealCompanyStatus();
+        $this->syncWebhookUrls();
 
         $smartyVars = [
             'digiteal_description' => $this->description,
-            'form_action'          => AdminController::$currentIndex.'&configure='.$this->name.'&token='.Tools::getAdminTokenLite('AdminModules'),
-            'reinit_module'        => AdminController::$currentIndex.'&configure='.$this->name.'&'.self::REINITIALIZE_MODULE.'&token='.Tools::getAdminTokenLite('AdminModules'),
+            'form_action'          => $this->getConfigurationUrl(),
+            'reinit_module'        => $this->getConfigurationUrl([self::REINITIALIZE_MODULE => null]),
             'reinit_submit'        => self::REINITIALIZE_MODULE,
         ];
 
@@ -514,9 +636,8 @@ class Digiteal extends PaymentModule
             }
         } elseif (Tools::isSubmit(self::SUBMIT_STEP_5)) {
             if (Tools::getIsset('contactPersonEmail') && Tools::getIsset('contactPersonPassword')) {
-                $shop_url = Tools::getCurrentUrlProtocolPrefix().htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__;
-                $webhookValidationLink = $shop_url.'modules/digiteal/validation.php';
-                $webhookErrorLink = $shop_url.'modules/digiteal/error.php';
+                $webhookValidationLink = $this->getWebhookValidationLink();
+                $webhookErrorLink = $this->getWebhookErrorLink();
                 if ($this->companyStatus->generateWebhookConfiguration(
                     $webhookValidationLink,
                     $webhookErrorLink,

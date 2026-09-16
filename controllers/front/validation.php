@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE.
  *
@@ -11,9 +12,10 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.3
+ * @version   1.0.5
  */
 require_once _PS_MODULE_DIR_.'/digiteal/src/Classes/DigitealLogger.php';
+require_once _PS_MODULE_DIR_.'/digiteal/src/Classes/DigitealTools.php';
 
 /**
  * Class DigitealValidationModuleFrontController.
@@ -34,7 +36,7 @@ class DigitealValidationModuleFrontController extends ModuleFrontController
             DigitealLogger::logInfo('[validation] $cart_id = '.$cart_id);
             $cart = new Cart((int) $cart_id);
             if (Validate::isLoadedObject($cart)) {
-                $order_id = Order::getOrderByCartId($cart_id);
+                $order_id = DigitealTools::getOrderIdByCartId($cart_id);
                 $order = new Order((int) $order_id);
                 if (Validate::isLoadedObject($order)) {
                     // Redirect to order confirmation

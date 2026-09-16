@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE.
  *
@@ -11,7 +12,7 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.3
+ * @version   1.0.5
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -26,9 +27,12 @@ if (!class_exists('DigitealLogger', false)) {
         private static $_logger = null;
 
         /**
-         * @var bool
+         * Null until KD_ENABLE_LOGGER has been read once. Initializing it to false instead would
+         * make the is_null() guard below unreachable and silently disable logging for good.
+         *
+         * @var bool|null
          */
-        private static $_enable = false;
+        private static $_enable = null;
 
         /**
          * @return FileLogger

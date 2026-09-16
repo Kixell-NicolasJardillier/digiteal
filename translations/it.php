@@ -73,3 +73,4 @@ $_MODULE['<{digiteal}prestashop>payment_return_0db71da7150c27142eef9d22b843b4a9'
 $_MODULE['<{digiteal}prestashop>payment_return_64430ad2835be8ad60c59e7d44e4b0b1'] = 'supporto clienti';
 $_MODULE['<{digiteal}prestashop>payment_return_d15feee53d81ea16269e54d4784fa123'] = 'Abbiamo notato un problema con il tuo ordine. Se pensi che si tratti di un errore, non esitare a contattare il nostro';
 $_MODULE['<{digiteal}prestashop>payment_return_66fcf4c223bbf4c7c886d4784e1f62e4'] = 'esperto team di assistenza clienti';
+$_MODULE['<{digiteal}prestashop>confirmation-1.7_a0bfb8e59e6c13fc8d990781f77694fe'] = 'Continua';

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NOTICE OF LICENSE.
  *
@@ -11,7 +12,7 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.3
+ * @version   1.0.5
  */
 require_once _PS_MODULE_DIR_.'/digiteal/src/Classes/DigitealLogger.php';
 require_once _PS_MODULE_DIR_.'/digiteal/src/Classes/DigitealRest.php';
@@ -125,8 +126,10 @@ class DigitealRedirectModuleFrontController extends ModuleFrontController
             if ($i === 0) {
                 $headers['http_code'] = $line;
             } else {
-                list($key, $value) = explode(': ', $line);
-                $headers[$key] = $value;
+                $parts = explode(': ', $line, 2);
+                if (count($parts) === 2) {
+                    $headers[$parts[0]] = $parts[1];
+                }
             }
         }
 
