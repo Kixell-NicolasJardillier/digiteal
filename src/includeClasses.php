@@ -12,7 +12,7 @@
  * @copyright Copyright © 2021 - SARL Kixell
  * @license   https://opensource.org/licenses/afl-3.0.php Academic Free License (AFL 3.0)
  *
- * @version   1.0.3
+ * @version   1.0.5
  */
 require_once __DIR__.'/Classes/DigitealPaymentMethod.php';
 require_once __DIR__.'/Classes/DigitealRest.php';
