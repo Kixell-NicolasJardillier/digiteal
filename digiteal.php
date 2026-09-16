@@ -61,8 +61,6 @@ class Digiteal extends PaymentModule
         $this->author = 'Kixell';
         $this->controllers = ['redirect', 'confirmation', 'validation', 'error', 'notify', 'notifyerror'];
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
-            // Only meaningful for the 1.6 displayPaymentEU hook. Module does not declare the
-            // property, so assigning it on 1.7+ would raise a dynamic property deprecation on PHP 8.2+.
             $this->is_eu_compatible = 1;
         }
         $this->bootstrap = true;
@@ -516,11 +514,9 @@ class Digiteal extends PaymentModule
     private function getConfigurationUrl($params = [])
     {
         if (!empty(AdminController::$currentIndex)) {
-            // Prestashop 1.5 to 8.
             $url = AdminController::$currentIndex.'&configure='.$this->name
                 .'&token='.Tools::getAdminTokenLite('AdminModules');
         } else {
-            // Prestashop 9. Keep path and query only, and drop anything that could break the markup.
             $requestUri = isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '';
             $url = preg_replace('/[^A-Za-z0-9_\-.~:\/?#\[\]@!$&\'()*+,;=%]/', '', $requestUri);
         }
@@ -560,30 +556,31 @@ class Digiteal extends PaymentModule
     }
 
     /**
-     * Tell whether the webhooks currently registered with Digiteal still point at the legacy
-     * entry points. Those shops keep working on Prestashop 1.5 to 8 but break on Prestashop 9,
-     * and the merchant has to go through step 5 again to register the new URLs (the Digiteal
-     * password is required for that and is never stored).
+     * Keep the stored notification URLs aligned with what this PrestaShop version serves.
      *
-     * @return bool
+     * @return void
      */
-    private function hasLegacyWebhookUrl()
+    public function syncWebhookUrls()
     {
         if (!$this->companyStatus instanceof DigitealCompanyStatus) {
-            return false;
+            $this->companyStatus = new DigitealCompanyStatus();
         }
 
         if (!$this->companyStatus->getModuleReady()) {
-            return false;
+            return;
         }
 
-        foreach ([$this->companyStatus->getWebhookValidationUrl(), $this->companyStatus->getWebhookErrorUrl()] as $url) {
-            if (is_string($url) && preg_match('#/modules/digiteal/(validation|error)\.php$#', $url)) {
-                return true;
-            }
+        $validation = $this->getWebhookValidationLink();
+        $error = $this->getWebhookErrorLink();
+
+        if ($this->companyStatus->getWebhookValidationUrl() === $validation
+            && $this->companyStatus->getWebhookErrorUrl() === $error) {
+            return;
         }
 
-        return false;
+        $this->companyStatus->setWebhookValidationUrl($validation);
+        $this->companyStatus->setWebhookErrorUrl($error);
+        $this->companyStatus->save();
     }
 
     /**
@@ -594,6 +591,7 @@ class Digiteal extends PaymentModule
     public function getContent()
     {
         $this->companyStatus = new DigitealCompanyStatus();
+        $this->syncWebhookUrls();
 
         $smartyVars = [
             'digiteal_description' => $this->description,
@@ -692,13 +690,6 @@ class Digiteal extends PaymentModule
         }
 
         $smartyVars['kdmode'] = $this->companyStatus->getMode();
-
-        // Shops configured before 1.0.5 still have the legacy .php webhooks registered with
-        // Digiteal. They answer 403 on Prestashop 9, so no order would ever be created : warn the
-        // merchant and point at the only fix, which is going through step 5 again.
-        if (!isset($smartyVars['messageError']) && $this->hasLegacyWebhookUrl()) {
-            $smartyVars['messageError'] = $this->l('Your payment notification URLs still use the old format and will stop working on PrestaShop 9. Please run "Finalize the configuration" again to register the new URLs with Digiteal.');
-        }
 
         if ($nextStep === 1) {
             $smartyVars['settings_step'] = 1;
